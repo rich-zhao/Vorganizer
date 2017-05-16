@@ -28,27 +28,27 @@ namespace VideoOrganizer
         
         private void Grid_Drop(object sender, DragEventArgs e)
         {
+            string fileInformation ="";
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                //TODO: Timer this
-                Dictionary<string, string> propertiesDict = new Dictionary<string, string>();
-                List<string> arrHeaders = new List<string>();
-
                 //gets the path of drag and drop file
                 String[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 foreach (String i in files){
-                    long size = new FileInfo(i).Length;
-
                     var inputFile = new MediaFile {Filename = @i };
                     using (var engine = new Engine())
                     {
                         engine.GetMetadata(inputFile);
                     }
-                    Console.WriteLine(propertiesDict);
+
+                    long fileSize = new FileInfo(i).Length;
+                    double fileFps = inputFile.Metadata.VideoData.Fps;
+                    string fileResolution = inputFile.Metadata.VideoData.FrameSize;
+                    TimeSpan fileDuration = inputFile.Metadata.Duration;
+                    fileInformation = String.Format("File information: \nFile Size: {0}\n File FPS: {1}\n File Resolution: {2}\n FileDuration: {3}",
+                        fileSize, fileFps, fileResolution, fileDuration);
                     
                 }
-                Console.WriteLine("test");
-               // dragNdrop.Content = e.Data.GetData(DataFormats.FileDrop);
+                dragNdrop.Content = fileInformation;//e.Data.GetData(DataFormats.FileDrop);
             }
         }
 
