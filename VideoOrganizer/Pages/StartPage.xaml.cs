@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Win32;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using VideoOrganizer;
 
 namespace VideoOrganizer
 {
@@ -20,15 +11,19 @@ namespace VideoOrganizer
     /// </summary>
     public partial class StartPage : Page
     {
+        SaveFileDialog saveDialog = new SaveFileDialog();
+
         public StartPage()
         {
             InitializeComponent();
+            InitSaveDialog();
         }
 
         private void btnNewDatabase_Click(object sender, RoutedEventArgs e)
         {
             //generate new SQL database
-            this.NavigationService.Navigate(new MainPage());
+            saveDialog.ShowDialog();
+            //this.NavigationService.Navigate(new MainPage());
         }
 
         private void btnLoadDatabase_Click(object sender, RoutedEventArgs e)
@@ -36,5 +31,24 @@ namespace VideoOrganizer
             //TODO: load existing sql database and push to mainpage
             this.NavigationService.Navigate(new MainPage(null));
         }
+
+        private void InitSaveDialog()
+        {
+            //saveDialog.CheckFileExists = true;
+            //saveDialog.CheckPathExists = true;
+            saveDialog.CreatePrompt = true;
+            saveDialog.AddExtension = true;
+            saveDialog.Filter = "Database | *.db";
+            saveDialog.DefaultExt = "db";
+            saveDialog.Title = "VideoOrganizer";
+            saveDialog.FileOk += saveDialog_FileOk;
+        }
+
+        private void saveDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            DatabaseService dbService = DatabaseService.Instance;
+            dbService.initializeNewDb(saveDialog.FileName);
+        }
+
     }
 }

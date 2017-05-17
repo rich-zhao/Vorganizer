@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.SQLite;
+using System.IO;
 
 namespace VideoOrganizer
 {
-    public sealed class DatabaseService
+    public class DatabaseService
     {
-        static DatabaseService instance;
+        private static DatabaseService instance;
         private DatabaseService() { }
 
         public static DatabaseService Instance
@@ -22,5 +24,13 @@ namespace VideoOrganizer
                 return instance;
             }
         }
+
+        public void initializeNewDb(string path)
+        {
+            
+            SQLiteConnection.CreateFile(path);
+
+        }
+
     }
 }
