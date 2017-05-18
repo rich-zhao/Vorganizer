@@ -55,5 +55,24 @@ namespace VideoOrganizer
             command.ExecuteNonQuery();
         }
 
+        public void loadExistingDb(string path)
+        {
+            connection = new SQLiteConnection("Data Source=" + path + ";Version=3;");
+            connection.Open();
+
+            //testing proof of concept. remove later
+            string s = "SELECT * FROM categories";
+            string total = "";
+
+            SQLiteCommand command = new SQLiteCommand(s, connection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                string r = reader["id"] + " " +  reader["name"] + "\n";
+                total += r;
+            }
+
+        }
+
     }
 }
