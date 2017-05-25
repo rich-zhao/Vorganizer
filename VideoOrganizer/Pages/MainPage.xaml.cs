@@ -29,6 +29,7 @@ namespace VideoOrganizer
         private void Grid_Drop(object sender, DragEventArgs e)
         {
             string fileInformation ="";
+            int validFiles = 0, invalidFiles = 0;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 //gets the path of drag and drop file
@@ -38,15 +39,23 @@ namespace VideoOrganizer
                     using (var engine = new Engine())
                     {
                         engine.GetMetadata(inputFile);
-                    }
 
+                        if(inputFile.Metadata == null)
+                        {
+                            invalidFiles++;
+                            return;
+                        }
+                        validFiles++;
+                    }
                     long fileSize = new FileInfo(i).Length;
                     double fileFps = inputFile.Metadata.VideoData.Fps;
                     string fileResolution = inputFile.Metadata.VideoData.FrameSize;
-                    TimeSpan fileDuration = inputFile.Metadata.Duration;
-                    fileInformation = String.Format("File information: \nFile Size: {0}\n File FPS: {1}\n File Resolution: {2}\n FileDuration: {3}",
-                        fileSize, fileFps, fileResolution, fileDuration);
-                    
+                    double fileDuration = inputFile.Metadata.Duration.TotalSeconds;
+                    //fileInformation = String.Format("File information: \nFile Size: {0}\n File FPS: {1}\n File Resolution: {2}\n FileDuration: {3}",
+                    //    fileSize, fileFps, fileResolution, fileDuration);
+
+                    DatabaseService.Instance.AddVideo(i.Substring(i.LastIndexOf('\\') + 1), i, fileSize.ToString(), fileResolution,
+                        fileFps.ToString(), fileDuration.ToString(), "");
                 }
                 dragNdrop.Content = fileInformation;//e.Data.GetData(DataFormats.FileDrop);
             }

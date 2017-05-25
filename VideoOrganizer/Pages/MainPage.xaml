@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:VideoOrganizer"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="735" d:DesignWidth="1000"
       Title="MainPage">
 
     <Grid AllowDrop="True" Drop="Grid_Drop">
@@ -16,7 +16,17 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Organize">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5">
+                    <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Stretch" Height="90" Stroke="Black" VerticalAlignment="Top"/>
+                    <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="30,33,0,0" VerticalAlignment="Top" Width="Auto"/>
+                    <ListView x:Name="listView" HorizontalAlignment="Stretch" Margin="10,95,0,10" VerticalAlignment="Stretch">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

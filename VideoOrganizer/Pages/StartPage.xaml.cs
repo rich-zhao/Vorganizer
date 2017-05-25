@@ -62,13 +62,13 @@ namespace VideoOrganizer
 
         private void loadDialog_FileOk(object sender, CancelEventArgs e)
         {
-            dbService.loadExistingDb(openDialog.FileName);
+            dbService.LoadExistingDb(openDialog.FileName);
             this.NavigationService.Navigate(new MainPage());
         }
 
         private void saveDialog_FileOk(object sender, CancelEventArgs e)
         {
-            dbService.initializeNewDb(saveDialog.FileName);
+            dbService.InitializeNewDb(saveDialog.FileName);
             this.NavigationService.Navigate(new MainPage());
         }
 
