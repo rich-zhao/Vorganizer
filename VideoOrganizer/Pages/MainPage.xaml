@@ -19,10 +19,32 @@
                 <Grid Background="#FFE5E5E5">
                     <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Stretch" Height="90" Stroke="Black" VerticalAlignment="Top"/>
                     <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="30,33,0,0" VerticalAlignment="Top" Width="Auto"/>
-                    <ListView x:Name="listView" HorizontalAlignment="Stretch" Margin="10,95,0,10" VerticalAlignment="Stretch">
+                    <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,0,10" VerticalAlignment="Stretch">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn/>
+                                <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="Path" Width="200" DisplayMemberBinding="{Binding Path}"/>
+                                <GridViewColumn Header="Favorite" Width="100" DisplayMemberBinding="{Binding IsFavorite}"/>
+                                <GridViewColumn Header="File Size" Width="100" DisplayMemberBinding="{Binding FileSize}"/>
+                                <GridViewColumn Header="Play Count" Width="100" DisplayMemberBinding="{Binding PlayCount}"/>
+                                <GridViewColumn Header="Rating" Width="50" DisplayMemberBinding="{Binding Rating}"/>
+                                <GridViewColumn Header="Resolution" Width="100" DisplayMemberBinding="{Binding Resolution}"/>
+                                <GridViewColumn Header="Fps" Width="50" DisplayMemberBinding="{Binding Fps}"/>
+                                <GridViewColumn Header="Seconds" Width="75" DisplayMemberBinding="{Binding Seconds}"/>
+                                <GridViewColumn Header="Date Added" Width="200" DisplayMemberBinding="{Binding DateAdded}"/>
+                                <!--<DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                                    <TextBlock Grid.Column="1" Text="{Binding Path}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding IsFavorite}" />
+                                    <TextBlock Grid.Column="3" Text="{Binding FileSize}" />
+                                    <TextBlock Grid.Column="4" Text="{Binding PlayCount}" />
+                                    <TextBlock Grid.Column="5" Text="{Binding Rating}" />
+                                    <TextBlock Grid.Column="6" Text="{Binding Resolution}" />
+                                    <TextBlock Grid.Column="7" Text="{Binding Fps}" />
+                                    <TextBlock Grid.Column="8" Text="{Binding Seconds}" />
+                                    <TextBlock Grid.Column="9" Text="{Binding DateAdded}" />
+                                -->
                             </GridView>
                         </ListView.View>
                     </ListView>

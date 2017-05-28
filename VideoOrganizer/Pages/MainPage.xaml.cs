@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using VideoOrganizer.Model;
 
 namespace VideoOrganizer
 {
@@ -14,16 +15,24 @@ namespace VideoOrganizer
     /// </summary>
     public partial class MainPage : Page
     {
-        private object database;
+        private DatabaseService dbService;
+        private List<VideoModel> videos = new List<VideoModel>();
 
         public MainPage()
         {
             InitializeComponent();
-        }
+            dbService = DatabaseService.Instance;
+            videos = dbService.GetVideos();
+            if (videos != null)
+            {
+                lvOrganize.ItemsSource = dbService.GetVideos();
+            }
 
-        public MainPage(object database)
-        {
-            this.database = database;
+            //videos.Add(new VideoModel() { Name = "Complete this WPF tutorial", Path = "asdg", IsFavorite=true, FileSize="500", PlayCount=1, Rating=3, Resolution="1920x1080", Fps=60, Seconds=3600, DateAdded= new TimeSpan() });
+            //videos.Add(new VideoModel() { Name = "Learn C#", Path = "asdg", IsFavorite = true, FileSize = "600", PlayCount = 2, Rating = 5, Resolution = "1024x768", Fps = 30, Seconds = 3300, DateAdded = new TimeSpan() });
+            //videos.Add(new VideoModel() { Name = "Wash the car", Path = "asdijuh", IsFavorite = true, FileSize = "800", PlayCount = 2, Rating = 4, Resolution = "1280x1024", Fps = 120, Seconds = 3800, DateAdded = new TimeSpan() });
+
+            //lbOrganize.ItemsSource = videos;
         }
         
         private void Grid_Drop(object sender, DragEventArgs e)

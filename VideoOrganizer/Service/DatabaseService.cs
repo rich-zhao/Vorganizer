@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.IO;
+using VideoOrganizer.Model;
 
 namespace VideoOrganizer
 {
@@ -65,7 +66,7 @@ namespace VideoOrganizer
                 "play_count integer default 0, " +
                 "rating integer default 0, " +
                 "resolution text default '0x0', " +
-                "fps double default 0," +
+                "fps integer default 0," +
                 "seconds integer default 0, " +
                 "hash text, " +
                 "date_added datetime default CURRENT_TIMESTAMP, " +
@@ -90,6 +91,43 @@ namespace VideoOrganizer
                 "name text)";
             command = new SQLiteCommand(categoriesQuery, connection);
             command.ExecuteNonQuery();
+        }
+
+        public List<VideoModel> GetVideos()
+        {
+            if (!IsConnectionOpen()) return null;
+            List<VideoModel> videos = new List<VideoModel>();
+
+            string getVideoQuery = "SELECT * FROM Videos";
+            SQLiteCommand command = new SQLiteCommand(getVideoQuery, connection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                VideoModel video = new VideoModel();
+                video.Name = (string)reader["name"];
+                video.Path = (string)reader["path"];
+                if (((long)reader["is_favorite"]) == 0)
+                {
+                    video.IsFavorite = false;
+                }
+                else
+                {
+                    video.IsFavorite = true;
+                }
+                video.FileSize = (string)reader["file_size"];
+                video.PlayCount = (long)reader["play_count"];
+                video.Rating = (long)reader["rating"];
+                video.Resolution = (string)reader["resolution"];
+                video.Fps = (long)reader["fps"];
+                video.Seconds = (long)reader["seconds"];
+                video.DateAdded = (DateTime)reader["date_added"];
+                if (!reader.IsDBNull(reader.GetOrdinal("date_last_watched"))){
+                    video.DateLastWatched = (DateTime)reader["date_last_watched"];
+                }
+                videos.Add(video);
+            }
+
+            return videos;
         }
 
         /// <summary>
