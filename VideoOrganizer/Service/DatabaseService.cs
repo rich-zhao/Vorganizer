@@ -34,9 +34,9 @@ namespace VideoOrganizer
             connection.Open();
         }
         
-        public void AddVideo(string name, string path, string fileSize, string resolution, string fps, string seconds, string hash)
+        public void AddVideo(string name, string path, string fileSize, string resolution, long fps, string seconds, string hash)
         {
-            string sql = "INSERT INTO videos (name, path, file_size, resolution, seconds, hash) VALUES(@name, @path, @file_size, @resolution, @seconds, @hash)";
+            string sql = "INSERT INTO videos (name, path, file_size, resolution, fps, seconds, hash) VALUES(@name, @path, @file_size, @resolution,@fps, @seconds, @hash)";
             SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@name", name);
             command.Parameters.AddWithValue("@path", path);

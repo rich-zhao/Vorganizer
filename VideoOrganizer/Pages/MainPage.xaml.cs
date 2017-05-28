@@ -37,7 +37,6 @@ namespace VideoOrganizer
         
         private void Grid_Drop(object sender, DragEventArgs e)
         {
-            string fileInformation ="";
             int validFiles = 0, invalidFiles = 0;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -57,16 +56,16 @@ namespace VideoOrganizer
                         validFiles++;
                     }
                     long fileSize = new FileInfo(i).Length;
-                    double fileFps = inputFile.Metadata.VideoData.Fps;
+                    long fileFps = Convert.ToInt64(inputFile.Metadata.VideoData.Fps);
                     string fileResolution = inputFile.Metadata.VideoData.FrameSize;
                     double fileDuration = inputFile.Metadata.Duration.TotalSeconds;
                     //fileInformation = String.Format("File information: \nFile Size: {0}\n File FPS: {1}\n File Resolution: {2}\n FileDuration: {3}",
                     //    fileSize, fileFps, fileResolution, fileDuration);
 
-                    DatabaseService.Instance.AddVideo(i.Substring(i.LastIndexOf('\\') + 1), i, fileSize.ToString(), fileResolution,
-                        fileFps.ToString(), fileDuration.ToString(), "");
+                   dbService.AddVideo(i.Substring(i.LastIndexOf('\\') + 1), i, fileSize.ToString(), fileResolution,
+                        fileFps, fileDuration.ToString(), "");
+                    lvOrganize.ItemsSource = dbService.GetVideos();
                 }
-                dragNdrop.Content = fileInformation;//e.Data.GetData(DataFormats.FileDrop);
             }
         }
 
