@@ -93,7 +93,8 @@ namespace VideoOrganizer
             command.ExecuteNonQuery();
         }
 
-        public List<VideoModel> GetVideos()
+        //Finds All videos from the database
+        public List<VideoModel> FindAllVideos()
         {
             if (!IsConnectionOpen()) return null;
             List<VideoModel> videos = new List<VideoModel>();
@@ -101,6 +102,29 @@ namespace VideoOrganizer
             string getVideoQuery = "SELECT * FROM Videos";
             SQLiteCommand command = new SQLiteCommand(getVideoQuery, connection);
             SQLiteDataReader reader = command.ExecuteReader();
+
+            ParseVideos(reader, videos);
+
+            return videos;
+        }
+
+        public List<VideoModel> FindVideos(string fileName)
+        {
+            if (!IsConnectionOpen()) return null;
+            List<VideoModel> videos = new List<VideoModel>();
+
+            string getVideoQuery = "SELECT * FROM Videos WHERE name LIKE @name";
+            SQLiteCommand command = new SQLiteCommand(getVideoQuery, connection);
+            command.Parameters.AddWithValue("@name", "%" + fileName + "%");
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            ParseVideos(reader, videos);
+            
+            return videos;
+        }
+
+        private void ParseVideos(SQLiteDataReader reader, List<VideoModel> videos)
+        {
             while (reader.Read())
             {
                 VideoModel video = new VideoModel();
@@ -119,15 +143,14 @@ namespace VideoOrganizer
                 video.Rating = (long)reader["rating"];
                 video.Resolution = (string)reader["resolution"];
                 video.Fps = (long)reader["fps"];
-                video.Seconds = (long)reader["seconds"];
+                video.Minutes = (long)reader["seconds"] / 60;
                 video.DateAdded = (DateTime)reader["date_added"];
-                if (!reader.IsDBNull(reader.GetOrdinal("date_last_watched"))){
+                if (!reader.IsDBNull(reader.GetOrdinal("date_last_watched")))
+                {
                     video.DateLastWatched = (DateTime)reader["date_last_watched"];
                 }
                 videos.Add(video);
             }
-
-            return videos;
         }
 
         /// <summary>

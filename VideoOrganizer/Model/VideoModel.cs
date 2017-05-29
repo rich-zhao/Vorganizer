@@ -16,7 +16,7 @@ namespace VideoOrganizer.Model
         public long Rating { get; set; }
         public string Resolution { get; set; }
         public long Fps { get; set; }
-        public long Seconds { get; set; }
+        public long Minutes { get; set; }
         public DateTime DateAdded { get; set; }
         public DateTime DateLastWatched { get; set; }
 
@@ -26,7 +26,7 @@ namespace VideoOrganizer.Model
         }
 
         public VideoModel(string Name, string Path, bool IsFavorite, string FileSize, long PlayCount,
-            long Rating, string Resolution, long Fps, long Seconds, DateTime DateAdded)
+            long Rating, string Resolution, long Fps, long Minutes, DateTime DateAdded)
         {
             this.Name = Name;
             this.Path = Path;
@@ -36,7 +36,7 @@ namespace VideoOrganizer.Model
             this.Rating = Rating;
             this.Resolution = Resolution;
             this.Fps = Fps;
-            this.Seconds = Seconds;
+            this.Minutes = Minutes;
             this.DateAdded = DateAdded;
         }
     }

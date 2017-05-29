@@ -18,8 +18,10 @@
             <TabItem Header="Organize">
                 <Grid Background="#FFE5E5E5">
                     <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Stretch" Height="90" Stroke="Black" VerticalAlignment="Top"/>
-                    <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="30,33,0,0" VerticalAlignment="Top" Width="Auto"/>
-                    <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,0,10" VerticalAlignment="Stretch">
+                    <Button x:Name="btnSearch" Content="Search" HorizontalAlignment="Left" Margin="144,37,0,0" VerticalAlignment="Top" Width="55" Click="btnSearch_Click" Height="23"/>
+                    <TextBox x:Name="tbSearch" HorizontalAlignment="Left" Height="23" Margin="10,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="tbSearch_KeyDown"/>
+
+                    <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
@@ -30,7 +32,7 @@
                                 <GridViewColumn Header="Rating" Width="50" DisplayMemberBinding="{Binding Rating}"/>
                                 <GridViewColumn Header="Resolution" Width="100" DisplayMemberBinding="{Binding Resolution}"/>
                                 <GridViewColumn Header="Fps" Width="50" DisplayMemberBinding="{Binding Fps}"/>
-                                <GridViewColumn Header="Seconds" Width="75" DisplayMemberBinding="{Binding Seconds}"/>
+                                <GridViewColumn Header="Minutes" Width="75" DisplayMemberBinding="{Binding Minutes}"/>
                                 <GridViewColumn Header="Date Added" Width="200" DisplayMemberBinding="{Binding DateAdded}"/>
                                 <!--<DataTemplate>
                                     <TextBlock Text="{Binding Name}" />
@@ -48,6 +50,7 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
+                    <Label x:Name="label" Content="Search Files" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
         </TabControl>

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using VideoOrganizer.Model;
 
 namespace VideoOrganizer
@@ -22,10 +23,10 @@ namespace VideoOrganizer
         {
             InitializeComponent();
             dbService = DatabaseService.Instance;
-            videos = dbService.GetVideos();
+            videos = dbService.FindAllVideos();
             if (videos != null)
             {
-                lvOrganize.ItemsSource = dbService.GetVideos();
+                lvOrganize.ItemsSource = dbService.FindAllVideos();
             }
 
             //videos.Add(new VideoModel() { Name = "Complete this WPF tutorial", Path = "asdg", IsFavorite=true, FileSize="500", PlayCount=1, Rating=3, Resolution="1920x1080", Fps=60, Seconds=3600, DateAdded= new TimeSpan() });
@@ -41,6 +42,7 @@ namespace VideoOrganizer
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 //gets the path of drag and drop file
+                //TODO: handle directory drag and drop
                 String[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 foreach (String i in files){
                     var inputFile = new MediaFile {Filename = @i };
@@ -64,10 +66,23 @@ namespace VideoOrganizer
 
                    dbService.AddVideo(i.Substring(i.LastIndexOf('\\') + 1), i, fileSize.ToString(), fileResolution,
                         fileFps, fileDuration.ToString(), "");
-                    lvOrganize.ItemsSource = dbService.GetVideos();
+                    lvOrganize.ItemsSource = dbService.FindAllVideos();
                 }
             }
         }
 
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            string searchText = tbSearch.Text;
+            lvOrganize.ItemsSource = dbService.FindVideos(searchText);
+        }
+
+        private void tbSearch_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                btnSearch_Click(this, new RoutedEventArgs());
+            }
+        }
     }
 }
