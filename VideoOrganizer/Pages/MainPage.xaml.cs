@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using VideoOrganizer.Model;
+using VideoOrganizer.Service;
 
 namespace VideoOrganizer
 {
@@ -18,16 +19,21 @@ namespace VideoOrganizer
     {
         private DatabaseService dbService;
         private List<VideoModel> videos = new List<VideoModel>();
+        private LogService Log;
 
         public MainPage()
         {
             InitializeComponent();
+            this.DataContext = this;
             dbService = DatabaseService.Instance;
             videos = dbService.FindAllVideos();
             if (videos != null)
             {
                 lvOrganize.ItemsSource = dbService.FindAllVideos();
             }
+
+            Log = new LogService();
+            LogBlock.DataContext = Log;
 
             //videos.Add(new VideoModel() { Name = "Complete this WPF tutorial", Path = "asdg", IsFavorite=true, FileSize="500", PlayCount=1, Rating=3, Resolution="1920x1080", Fps=60, Seconds=3600, DateAdded= new TimeSpan() });
             //videos.Add(new VideoModel() { Name = "Learn C#", Path = "asdg", IsFavorite = true, FileSize = "600", PlayCount = 2, Rating = 5, Resolution = "1024x768", Fps = 30, Seconds = 3300, DateAdded = new TimeSpan() });
@@ -43,6 +49,8 @@ namespace VideoOrganizer
             {
                 //gets the path of drag and drop file
                 //TODO: handle directory drag and drop
+
+                //iterate through each file in directory
                 String[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 foreach (String i in files){
                     var inputFile = new MediaFile {Filename = @i };
@@ -71,18 +79,42 @@ namespace VideoOrganizer
             }
         }
 
-        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        private void SearchVideos()
         {
             string searchText = tbSearch.Text;
             lvOrganize.ItemsSource = dbService.FindVideos(searchText);
+        }
+
+        private void EditVideo()
+        {
+            //TODO: implement editing a video properties (category and tag)
+            throw new NotImplementedException();
+        }
+
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            SearchVideos();
         }
 
         private void tbSearch_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
             {
-                btnSearch_Click(this, new RoutedEventArgs());
+                SearchVideos();
             }
+        }
+
+        private void lvOrganize_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            //TODO: Doubleclick functionality on list view
+            throw new NotImplementedException();
+        }
+
+        private void btnEdit_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Edit button click
+            Log.LogText = "appending";
+
         }
     }
 }

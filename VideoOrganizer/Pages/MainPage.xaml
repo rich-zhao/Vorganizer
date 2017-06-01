@@ -9,19 +9,23 @@
       Title="MainPage">
 
     <Grid AllowDrop="True" Drop="Grid_Drop">
-        <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0">
             <TabItem Header="Add">
-                <Grid Background="#FFE5E5E5">
+                <Grid Background="#FFE5E5E5" Margin="0,0,0,20">
                     <Label x:Name="dragNdrop" Content="Label" HorizontalAlignment="Left" Margin="56,65,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Organize">
-                <Grid Background="#FFE5E5E5">
+                <Grid Background="#FFE5E5E5" Margin="0,0,0,20">
                     <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Stretch" Height="90" Stroke="Black" VerticalAlignment="Top"/>
                     <Button x:Name="btnSearch" Content="Search" HorizontalAlignment="Left" Margin="144,37,0,0" VerticalAlignment="Top" Width="55" Click="btnSearch_Click" Height="23"/>
                     <TextBox x:Name="tbSearch" HorizontalAlignment="Left" Height="23" Margin="10,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="tbSearch_KeyDown"/>
 
-                    <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch">
+                    <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch" MouseDoubleClick="lvOrganize_MouseDoubleClick">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
@@ -51,8 +55,17 @@
                         </ListView.View>
                     </ListView>
                     <Label x:Name="label" Content="Search Files" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Left" Margin="906,37,0,0" VerticalAlignment="Top" Width="55" Click="btnEdit_Click" Height="23"/>
                 </Grid>
             </TabItem>
         </TabControl>
+        <Expander Header="Log" Name="Expander1" Background="Coral" VerticalAlignment="Bottom" ExpandDirection="Up">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Height="100">
+                <StackPanel Name="StackScroll" Margin="0,0,0,2"  Background="White">
+                    <TextBlock Name="LogBlock" Text="{Binding LogText}">
+                    </TextBlock>
+                </StackPanel>
+            </ScrollViewer>
+        </Expander>
     </Grid>
 </Page>
