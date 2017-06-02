@@ -24,6 +24,16 @@ namespace VideoOrganizer.Service
             }
         }
 
+        /// <summary>
+        /// Synchroniously logs what is happening.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public async Task LogAsync(string line)
+        {
+            await Task.Run(() => LogText = line);
+        }
+
         public void Log(string line)
         {
             LogText = line;

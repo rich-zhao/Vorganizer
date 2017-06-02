@@ -62,7 +62,7 @@
         <Expander Header="Log" Name="Expander1" Background="Coral" VerticalAlignment="Bottom" ExpandDirection="Up">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Height="100">
                 <StackPanel Name="StackScroll" Margin="0,0,0,2"  Background="White">
-                    <TextBlock Name="LogBlock" Text="{Binding LogText}">
+                    <TextBlock Name="LogTextBlock" Text="{Binding LogText}">
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>
