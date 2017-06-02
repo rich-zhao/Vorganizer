@@ -9,7 +9,7 @@ namespace VideoOrganizer.Service
 {
     class LogService : INotifyPropertyChanged
     {
-        private string _logText = "";
+        private string _logText = "Log:\n";
         public string LogText
         {
             get

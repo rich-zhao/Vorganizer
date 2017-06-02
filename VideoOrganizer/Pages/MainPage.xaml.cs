@@ -38,11 +38,8 @@ namespace VideoOrganizer
             LogTextBlock.DataContext = Logger;
             ThreadPool.SetMinThreads(100, 100);
 
-            //videos.Add(new VideoModel() { Name = "Complete this WPF tutorial", Path = "asdg", IsFavorite=true, FileSize="500", PlayCount=1, Rating=3, Resolution="1920x1080", Fps=60, Seconds=3600, DateAdded= new TimeSpan() });
-            //videos.Add(new VideoModel() { Name = "Learn C#", Path = "asdg", IsFavorite = true, FileSize = "600", PlayCount = 2, Rating = 5, Resolution = "1024x768", Fps = 30, Seconds = 3300, DateAdded = new TimeSpan() });
-            //videos.Add(new VideoModel() { Name = "Wash the car", Path = "asdijuh", IsFavorite = true, FileSize = "800", PlayCount = 2, Rating = 4, Resolution = "1280x1024", Fps = 120, Seconds = 3800, DateAdded = new TimeSpan() });
-
-            //lbOrganize.ItemsSource = videos;
+            //var ffMpeg = new NReco.VideoConverter.FFMpegConverter();
+            //ffMpeg.GetVideoThumbnail()
         }
         
         private async void Grid_Drop(object sender, DragEventArgs e)
