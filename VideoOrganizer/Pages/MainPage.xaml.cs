@@ -177,7 +177,8 @@ namespace VideoOrganizer
 
         private void SetupEditPage()
         {
-
+            if(currVideo == null) return;
+            lbEditName.DataContext = currVideo;
 
             ChildGrid.ColumnDefinitions[2].Width = new GridLength(this.WindowWidth / 3);
         }
