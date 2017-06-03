@@ -8,6 +8,7 @@ namespace VideoOrganizer.Model
 {
     public class VideoModel
     {
+        public long Id { get; set; }
         public string Name { get; internal set; }
         public string Path { get; set; }
         public bool IsFavorite { get; set; }
@@ -25,7 +26,7 @@ namespace VideoOrganizer.Model
 
         }
 
-        public VideoModel(string Name, string Path, bool IsFavorite, string FileSize, long PlayCount,
+        public VideoModel(int id, string Name, string Path, bool IsFavorite, string FileSize, long PlayCount,
             long Rating, string Resolution, long Fps, long Minutes, DateTime DateAdded)
         {
             this.Name = Name;

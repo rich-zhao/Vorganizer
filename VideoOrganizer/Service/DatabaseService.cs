@@ -138,6 +138,7 @@ namespace VideoOrganizer
                 {
                     video.IsFavorite = true;
                 }
+                video.Id = (long)reader["id"];
                 video.FileSize = (string)reader["file_size"];
                 video.PlayCount = (long)reader["play_count"];
                 video.Rating = (long)reader["rating"];

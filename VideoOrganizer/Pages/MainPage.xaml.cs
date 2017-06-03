@@ -22,6 +22,7 @@ namespace VideoOrganizer
         private DatabaseService dbService;
         private List<VideoModel> videos = new List<VideoModel>();
         private LogService Logger;
+        private VideoModel currVideo;
 
         public MainPage()
         {
@@ -29,6 +30,7 @@ namespace VideoOrganizer
             this.DataContext = this;
             dbService = DatabaseService.Instance;
             videos = dbService.FindAllVideos();
+            currVideo = null;
             if (videos != null)
             {
                 lvOrganize.ItemsSource = dbService.FindAllVideos();
@@ -173,6 +175,13 @@ namespace VideoOrganizer
             throw new NotImplementedException();
         }
 
+        private void SetupEditPage()
+        {
+
+
+            ChildGrid.ColumnDefinitions[2].Width = new GridLength(this.WindowWidth / 3);
+        }
+
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
             SearchVideos();
@@ -188,15 +197,29 @@ namespace VideoOrganizer
 
         private void lvOrganize_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            //TODO: Doubleclick functionality on list view
-            throw new NotImplementedException();
+            //Doubleclick functionality on list view opens edit window
+            if (sender == null) return;
+            ListView listView = sender as ListView;
+            VideoModel selected = listView.SelectedItem as VideoModel;
+
+            currVideo = selected;
+            SetupEditPage();
         }
 
         private void btnEdit_Click(object sender, RoutedEventArgs e)
         {
             //TODO: Edit button click
-            Logger.LogText = "appending";
+            if (lvOrganize.SelectedItem != null)
+            {
+                currVideo = lvOrganize.SelectedItem as VideoModel;
+                SetupEditPage();
+            }
 
+        }
+
+        private void btnCloseEdit_Click(object sender, RoutedEventArgs e)
+        {
+            ChildGrid.ColumnDefinitions[2].Width = new GridLength(0);
         }
     }
 }
