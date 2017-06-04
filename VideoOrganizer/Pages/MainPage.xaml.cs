@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using VideoOrganizer.Model;
 using VideoOrganizer.Service;
 
@@ -23,6 +25,7 @@ namespace VideoOrganizer
         private List<VideoModel> videos = new List<VideoModel>();
         private LogService Logger;
         private VideoModel currVideo;
+        private NReco.VideoConverter.FFMpegConverter ffMpeg;
 
         public MainPage()
         {
@@ -40,8 +43,7 @@ namespace VideoOrganizer
             LogTextBlock.DataContext = Logger;
             ThreadPool.SetMinThreads(100, 100);
 
-            //var ffMpeg = new NReco.VideoConverter.FFMpegConverter();
-            //ffMpeg.GetVideoThumbnail()
+            ffMpeg = new NReco.VideoConverter.FFMpegConverter();
         }
         
         private async void Grid_Drop(object sender, DragEventArgs e)
@@ -179,6 +181,39 @@ namespace VideoOrganizer
         {
             if(currVideo == null) return;
             lbEditName.DataContext = currVideo;
+            lbEditFilePath.DataContext = currVideo;
+            lbEditDateAdded.DataContext = currVideo;
+            lbEditDateLastWatched.DataContext = currVideo;
+            lbEditDuration.DataContext = currVideo;
+            lbEditFavorite.DataContext = currVideo;
+            lbEditFileSize.DataContext = currVideo;
+            lbEditFps.DataContext = currVideo;
+            lbEditPlayCount.DataContext = currVideo;
+            lbEditRating.DataContext = currVideo;
+            lbEditResolution.DataContext = currVideo;
+
+            /*
+            var MemStream = new MemoryStream();
+            var thumbNailSource = new BitmapImage();
+            ffMpeg.GetVideoThumbnail(currVideo.Path, "C:/temp/thumbnail.jpeg", 60f);
+            MemStream.Position = 0;
+            thumbNailSource.BeginInit();
+            thumbNailSource.StreamSource = MemStream;
+            thumbNailSource.EndInit();
+            videoThumbnail.Source = thumbNailSource;
+            */
+            var thumbNailSource = new BitmapImage();
+            using (var memStream = new MemoryStream())
+            {
+                ffMpeg.GetVideoThumbnail(currVideo.Path, memStream, 60f);
+                memStream.Position = 0;
+                thumbNailSource.BeginInit();
+                thumbNailSource.CacheOption = BitmapCacheOption.OnLoad;
+                thumbNailSource.StreamSource = memStream;
+                thumbNailSource.EndInit();
+                thumbNailSource.Freeze();
+                videoThumbnail.Source = thumbNailSource;
+            }
 
             ChildGrid.ColumnDefinitions[2].Width = new GridLength(this.WindowWidth / 3);
         }
@@ -221,6 +256,11 @@ namespace VideoOrganizer
         private void btnCloseEdit_Click(object sender, RoutedEventArgs e)
         {
             ChildGrid.ColumnDefinitions[2].Width = new GridLength(0);
+        }
+
+        private void btnSaveEdit_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

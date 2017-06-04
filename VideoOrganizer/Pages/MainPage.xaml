@@ -51,58 +51,55 @@
                     <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Right" Margin="10,37,10,10" VerticalAlignment="Top" Width="55" Click="btnEdit_Click" Height="23"/>
 
                     <GridSplitter Name="VerticalGS" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
-                    <DockPanel Grid.Column="2" >
-                        <StackPanel>
+                    <StackPanel Name="FileInfo" Grid.Column="2">
+                        <WrapPanel>
                             <Button x:Name="btnCloseEdit" Content="Close" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="55" Click="btnCloseEdit_Click" Height="23"/>
-                            <Label FontSize="50" Content="Edit Page"/>
-                            <WrapPanel>
-                                <Label>File Name</Label>
-                                <Label x:Name="lbEditName" Content="{Binding Name}"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>File Path</Label>
-                                <Label x:Name="lbEditFilePath" Content="Label"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>Favorite</Label>
-                                <Label x:Name="lbEditFavorite" Content="Label"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>File Size</Label>
-                                <Label x:Name="lbEditFileSize" Content="Label"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>Play Count</Label>
-                                <Label x:Name="lbEditPlayCount" Content="Label"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>Rating</Label>
-                                <Label x:Name="lbEditRating" Content="Label"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>Resolution</Label>
-                                <Label x:Name="lbEditResolution" Content="Label"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>Frames Per Second</Label>
-                                <Label x:Name="lbEditFps" Content="Label"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>Duration</Label>
-                                <Label x:Name="lbEditDuration" Content="Label"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>Date Added</Label>
-                                <Label x:Name="lbEditDateAdded" Content="Label"/>
-                            </WrapPanel>
-                            <WrapPanel>
-                                <Label>Date Last Watched</Label>
-                                <Label x:Name="lbEditDateLastWatched" Content="Label"/>
-                            </WrapPanel>
-
-                        </StackPanel>
-                        <Image x:Name="image" Grid.Column="2" HorizontalAlignment="Right" Height="201" Margin="0,0,0,0" VerticalAlignment="Top" Width="201"/>
-                    </DockPanel>
+                            <Button x:Name="btnSaveEdit" Content="Save" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="55" Click="btnSaveEdit_Click" Height="23"/>
+                        </WrapPanel>
+                        <Label FontSize="50" Content="Edit Page"/>
+                        <Image x:Name="videoThumbnail" Grid.Column="2" HorizontalAlignment="Left" Height="Auto" Margin="0,0,0,0" VerticalAlignment="Top" Width="300"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="0" Grid.Row="0" >File Name:</Label>
+                            <Label Grid.Column="1"  Grid.Row="0" x:Name="lbEditName" Content="{Binding Name}"/>
+                            <Label Grid.Column="0" Grid.Row="1">File Path:</Label>
+                            <Label  Grid.Column="1" Grid.Row="1" x:Name="lbEditFilePath" Content="{Binding Path}"/>
+                            <Label Grid.Column="0" Grid.Row="2">Favorite:</Label>
+                            <CheckBox  Grid.Column="1"  Grid.Row="2" x:Name="lbEditFavorite"  IsChecked="{Binding IsFavorite}"/>
+                            <Label Grid.Column="0" Grid.Row="3">File Size:</Label>
+                            <Label  Grid.Column="1" Grid.Row="3" x:Name="lbEditFileSize" Content="{Binding FileSize}" ContentStringFormat="{}{0} mb"/>
+                            <Label Grid.Column="0" Grid.Row="4">Play Count:</Label>
+                            <Label  Grid.Column="1" Grid.Row="4" x:Name="lbEditPlayCount" Content="{Binding PlayCount}"/>
+                            <Label Grid.Column="0" Grid.Row="5">Rating:</Label>
+                            <Label  Grid.Column="1" Grid.Row="5" x:Name="lbEditRating" Content="{Binding Rating}"/>
+                            <Label Grid.Column="0" Grid.Row="6">Resolution:</Label>
+                            <Label  Grid.Column="1" Grid.Row="6" x:Name="lbEditResolution" Content="{Binding Resolution}"/>
+                            <Label Grid.Column="0" Grid.Row="7">Frames Per Second:</Label>
+                            <Label  Grid.Column="1" Grid.Row="7" x:Name="lbEditFps" Content="{Binding Fps}"/>
+                            <Label Grid.Column="0" Grid.Row="8">Duration:</Label>
+                            <Label  Grid.Column="1" Grid.Row="8" x:Name="lbEditDuration" Content="{Binding Minutes}" ContentStringFormat="{}{0} minutes"/>
+                            <Label Grid.Column="0" Grid.Row="9">Date Added:</Label>
+                            <Label  Grid.Column="1" Grid.Row="9" x:Name="lbEditDateAdded" Content="{Binding DateAdded}"/>
+                            <Label Grid.Column="0" Grid.Row="10">Date Last Watched:</Label>
+                            <Label Grid.Column="1"  Grid.Row="10" x:Name="lbEditDateLastWatched" Content="{Binding DateLastWatched}"/>
+                        </Grid>
+                    </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>
