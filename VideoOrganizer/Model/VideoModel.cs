@@ -30,6 +30,7 @@ namespace VideoOrganizer.Model
         public long Fps { get; set; }
         public long Minutes { get; set; }
         public DateTime DateAdded { get; set; }
+        public DateTime DateOriginal { get; set; }
         public DateTime DateLastWatched { get; set; }
 
         public VideoModel()

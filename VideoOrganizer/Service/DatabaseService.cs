@@ -34,9 +34,9 @@ namespace VideoOrganizer
             connection.Open();
         }
         
-        public void AddVideo(string name, string path, string fileSize, string resolution, long fps, string seconds, string hash)
+        public void AddVideo(string name, string path, string fileSize, string resolution, long fps, string seconds, string hash, DateTime date_original, DateTime date_last_watched)
         {
-            string sql = "INSERT INTO videos (name, path, file_size, resolution, fps, seconds, hash) VALUES(@name, @path, @file_size, @resolution,@fps, @seconds, @hash)";
+            string sql = "INSERT INTO videos (name, path, file_size, resolution, fps, seconds, hash, date_original, date_last_watched) VALUES(@name, @path, @file_size, @resolution,@fps, @seconds, @hash, @date_original, @date_last_watched)";
             SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@name", name);
             command.Parameters.AddWithValue("@path", path);
@@ -45,6 +45,8 @@ namespace VideoOrganizer
             command.Parameters.AddWithValue("@fps", fps);
             command.Parameters.AddWithValue("@seconds", seconds);
             command.Parameters.AddWithValue("@hash", hash);
+            command.Parameters.AddWithValue("@date_original", date_original);
+            command.Parameters.AddWithValue("@date_last_watched", date_last_watched);
 
             command.ExecuteNonQuery();
         }
@@ -123,6 +125,20 @@ namespace VideoOrganizer
             return videos;
         }
 
+        public void UpdateVideo(VideoModel video)
+        {
+            if (!IsConnectionOpen()) throw new Exception();
+            string updateVideoQuery = "UPDATE Videos SET is_favorite=@favorite, play_count=@play_count, " +
+                "rating=@rating, date_last_watched=@date_last_watched WHERE id =@id";
+            SQLiteCommand command = new SQLiteCommand(updateVideoQuery, connection);
+            command.Parameters.AddWithValue("@id", video.Id);
+            command.Parameters.AddWithValue("@favorite", video.IsFavorite);
+            command.Parameters.AddWithValue("@play_count", video.PlayCount);
+            command.Parameters.AddWithValue("@rating", video.Rating);
+            command.Parameters.AddWithValue("@date_last_watched", video.DateLastWatched);
+            command.ExecuteNonQuery();
+        }
+
         private void ParseVideos(SQLiteDataReader reader, List<VideoModel> videos)
         {
             while (reader.Read())
@@ -146,10 +162,10 @@ namespace VideoOrganizer
                 video.Fps = (long)reader["fps"];
                 video.Minutes = (long)reader["seconds"] / 60;
                 video.DateAdded = (DateTime)reader["date_added"];
+                if (!reader.IsDBNull(reader.GetOrdinal("date_original")))
+                    video.DateOriginal = (DateTime)reader["date_original"];
                 if (!reader.IsDBNull(reader.GetOrdinal("date_last_watched")))
-                {
                     video.DateLastWatched = (DateTime)reader["date_last_watched"];
-                }
                 videos.Add(video);
             }
         }

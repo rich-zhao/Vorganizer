@@ -75,6 +75,7 @@
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <Label Grid.Column="0" Grid.Row="0" >File Name:</Label>
                             <Label Grid.Column="1"  Grid.Row="0" x:Name="lbEditName" Content="{Binding Name}"/>
@@ -98,6 +99,8 @@
                             <Label  Grid.Column="1" Grid.Row="9" x:Name="lbEditDateAdded" Content="{Binding DateAdded}"/>
                             <Label Grid.Column="0" Grid.Row="10">Date Last Watched:</Label>
                             <Label Grid.Column="1"  Grid.Row="10" x:Name="lbEditDateLastWatched" Content="{Binding DateLastWatched}"/>
+                            <Label Grid.Column="0" Grid.Row="11">Original Date:</Label>
+                            <Label Grid.Column="1"  Grid.Row="11" x:Name="lbEditOriginalDate" Content="{Binding DateOriginal}"/>
                         </Grid>
                     </StackPanel>
                 </Grid>

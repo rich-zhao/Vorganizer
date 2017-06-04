@@ -86,6 +86,7 @@ namespace VideoOrganizer
             int validFiles = 0, invalidFiles = 0;
             var fileName = path.Substring(path.LastIndexOf('\\') + 1);
             FileAttributes attr = File.GetAttributes(@path);
+            FileInfo fileInfo = new FileInfo(path);
             if (attr.HasFlag(FileAttributes.Directory))
             {
                 //handles directories and files within directory
@@ -156,9 +157,10 @@ namespace VideoOrganizer
                 long fileFps = Convert.ToInt64(inputFile.Metadata.VideoData.Fps);
                 string fileResolution = inputFile.Metadata.VideoData.FrameSize;
                 double fileDuration = inputFile.Metadata.Duration.TotalSeconds;
+                DateTime dateOriginal = fileInfo.LastWriteTime;
 
                 dbService.AddVideo(fileName, path, fileSize.ToString(), fileResolution,
-                        fileFps, fileDuration.ToString(), "");
+                        fileFps, fileDuration.ToString(), "", dateOriginal, new DateTime());
                 //lvOrganize.ItemsSource = dbService.FindAllVideos();
             }
 
@@ -191,6 +193,7 @@ namespace VideoOrganizer
             lbEditPlayCount.DataContext = currVideo;
             lbEditRating.DataContext = currVideo;
             lbEditResolution.DataContext = currVideo;
+            lbEditOriginalDate.DataContext = currVideo;
 
             /*
             var MemStream = new MemoryStream();
@@ -260,7 +263,7 @@ namespace VideoOrganizer
 
         private void btnSaveEdit_Click(object sender, RoutedEventArgs e)
         {
-
+            dbService.UpdateVideo(currVideo);
         }
     }
 }
