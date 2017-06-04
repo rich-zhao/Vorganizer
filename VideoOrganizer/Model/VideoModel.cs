@@ -12,7 +12,18 @@ namespace VideoOrganizer.Model
         public string Name { get; internal set; }
         public string Path { get; set; }
         public bool IsFavorite { get; set; }
-        public string FileSize { get; set; }
+        //filesize in bytes, but we return it in megabytes
+        private string _fileSize;
+        public string FileSize {
+            get
+            {
+                return (Int64.Parse(_fileSize) / 1000000).ToString();
+            }
+            set
+            {
+                _fileSize = value;
+            }
+        }
         public long PlayCount { get; set; }
         public long Rating { get; set; }
         public string Resolution { get; set; }
