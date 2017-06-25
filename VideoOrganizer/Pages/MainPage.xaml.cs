@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using VideoOrganizer.Model;
 using VideoOrganizer.Service;
+using VideoOrganizer.Windows;
 
 namespace VideoOrganizer
 {
@@ -179,6 +180,11 @@ namespace VideoOrganizer
             throw new NotImplementedException();
         }
 
+        private List<TagModel> GetTagsForVideo()
+        {
+            return dbService.FindVideoTags(currVideo.Id);
+        }
+
         private void SetupEditPage()
         {
             if(currVideo == null) return;
@@ -219,6 +225,43 @@ namespace VideoOrganizer
             }
 
             ChildGrid.ColumnDefinitions[2].Width = new GridLength(this.WindowWidth / 3);
+
+            UpdateVideoTags(currVideo);
+        }
+
+        public Dictionary<CategoryModel, List<TagModel>> UpdateVideoTags(VideoModel video)
+        {
+            Dictionary<CategoryModel, List<TagModel>> videoTags = new Dictionary<CategoryModel, List<TagModel>>();
+            List<TagModel> allTags = dbService.FindVideoTags(video);
+            Dictionary<long, CategoryModel> CategoryModelsMap = allTags.Select(tags => tags.Category)
+                                                                        .GroupBy(cat => cat.Id)
+                                                                        .Select(cat => cat.First())
+                                                                        .ToDictionary(cat => cat.Id);
+
+            videoTags = allTags.GroupBy(tags => tags.Category.Id)
+                                .ToDictionary(group => CategoryModelsMap[group.Key], group => group.ToList());
+
+            CategoryModelsMap.Values.ToList().ForEach(category => {
+                //creates label
+                Label lblCat = new Label();
+                lblCat.Content = category.Name;
+                stackPanelTags.Children.Add(lblCat);
+
+                //adds listbox of Tags
+                ListBox listBoxTags = new ListBox();
+                videoTags[category].ForEach(tag => {
+                    listBoxTags.Items.Add(tag.Tag);
+                    listBoxTags.MouseDoubleClick += new MouseButtonEventHandler(element_TagDoubleClick);
+                });
+                stackPanelTags.Children.Add(listBoxTags);
+            });
+            
+            return videoTags;
+        }
+
+        private void element_TagDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
@@ -264,6 +307,16 @@ namespace VideoOrganizer
         private void btnSaveEdit_Click(object sender, RoutedEventArgs e)
         {
             dbService.UpdateVideo(currVideo);
+        }
+
+        private void btnAddCategory_Click(object sender, RoutedEventArgs e)
+        {
+            CategoryTagWindow window = new CategoryTagWindow(currVideo)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            
+            window.ShowDialog();
         }
     }
 }

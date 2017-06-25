@@ -56,7 +56,7 @@
                             <Button x:Name="btnCloseEdit" Content="Close" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="55" Click="btnCloseEdit_Click" Height="23"/>
                             <Button x:Name="btnSaveEdit" Content="Save" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="55" Click="btnSaveEdit_Click" Height="23"/>
                         </WrapPanel>
-                        <Label FontSize="50" Content="Edit Page"/>
+                        <Label FontSize="25" Content="File Details" FontWeight="Bold"/>
                         <Image x:Name="videoThumbnail" Grid.Column="2" HorizontalAlignment="Left" Height="Auto" Margin="0,0,0,0" VerticalAlignment="Top" Width="300"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -96,12 +96,32 @@
                             <Label Grid.Column="0" Grid.Row="8">Duration:</Label>
                             <Label  Grid.Column="1" Grid.Row="8" x:Name="lbEditDuration" Content="{Binding Minutes}" ContentStringFormat="{}{0} minutes"/>
                             <Label Grid.Column="0" Grid.Row="9">Date Added:</Label>
-                            <Label  Grid.Column="1" Grid.Row="9" x:Name="lbEditDateAdded" Content="{Binding DateAdded}"/>
+                            <Label Grid.Column="1" Grid.Row="9" x:Name="lbEditDateAdded" Content="{Binding DateAdded}"/>
                             <Label Grid.Column="0" Grid.Row="10">Date Last Watched:</Label>
                             <Label Grid.Column="1"  Grid.Row="10" x:Name="lbEditDateLastWatched" Content="{Binding DateLastWatched}"/>
                             <Label Grid.Column="0" Grid.Row="11">Original Date:</Label>
                             <Label Grid.Column="1"  Grid.Row="11" x:Name="lbEditOriginalDate" Content="{Binding DateOriginal}"/>
                         </Grid>
+
+                        <StackPanel Name="stackPanelTags">
+                            <Label Name="lbTag" FontSize="25" Content="Organize" FontWeight="Bold"/>
+                            <Button x:Name="btnAddCategory" Content="Add Category" Height="30" Margin="0,0,0,0" Click="btnAddCategory_Click" />
+                            <!--<ListBox x:Name="listBoxCatTags"
+                                     SelectedValuePath="Key" Height="114">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="Black" BorderThickness="2">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Path=Value}" />
+                                                <TextBlock Text="{Binding Path=Key.Name}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>-->
+                            <!--<Button x:Name="btnAddCategorytest" Content="Add 2" Height="30" Margin="0,0,0,0" Click="btnAddCategorytest_Click" />-->
+                        </StackPanel>
+                        
                     </StackPanel>
                 </Grid>
             </TabItem>
