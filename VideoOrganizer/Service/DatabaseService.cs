@@ -33,23 +33,6 @@ namespace VideoOrganizer
             connection = new SQLiteConnection("Data Source=" + path + ";Version=3;");
             connection.Open();
         }
-        
-        public void AddVideo(string name, string path, string fileSize, string resolution, long fps, string seconds, string hash, DateTime date_original, DateTime date_last_watched)
-        {
-            string sql = "INSERT INTO videos (name, path, file_size, resolution, fps, seconds, hash, date_original, date_last_watched) VALUES(@name, @path, @file_size, @resolution,@fps, @seconds, @hash, @date_original, @date_last_watched)";
-            SQLiteCommand command = new SQLiteCommand(sql, connection);
-            command.Parameters.AddWithValue("@name", name);
-            command.Parameters.AddWithValue("@path", path);
-            command.Parameters.AddWithValue("@file_size", fileSize);
-            command.Parameters.AddWithValue("@resolution",resolution);
-            command.Parameters.AddWithValue("@fps", fps);
-            command.Parameters.AddWithValue("@seconds", seconds);
-            command.Parameters.AddWithValue("@hash", hash);
-            command.Parameters.AddWithValue("@date_original", date_original);
-            command.Parameters.AddWithValue("@date_last_watched", date_last_watched);
-
-            command.ExecuteNonQuery();
-        }
 
         /// <summary>
         /// Initializes a new Database according to the path the user has shown in the SaveFileDialog
@@ -78,14 +61,14 @@ namespace VideoOrganizer
             command.ExecuteNonQuery();
 
             string videoTagQuery = "CREATE TABLE video_tags(id integer primary key, " +
-                "video_id int, " +
-                "tag_id int)";
+                "video_id integer, " +
+                "tag_id integer)";
             command = new SQLiteCommand(videoTagQuery, connection);
             command.ExecuteNonQuery();
 
             string tagQuery = "CREATE TABLE tags(id integer primary key, " +
                 "name text, " +
-                "category int)";
+                "category integer)";
             command = new SQLiteCommand(tagQuery, connection);
             command.ExecuteNonQuery();
 
@@ -93,6 +76,168 @@ namespace VideoOrganizer
                 "name text)";
             command = new SQLiteCommand(categoriesQuery, connection);
             command.ExecuteNonQuery();
+        }
+
+        public void AddVideo(string name, string path, string fileSize, string resolution, long fps, string seconds, string hash, DateTime date_original, DateTime date_last_watched)
+        {
+            string sql = "INSERT INTO videos (name, path, file_size, resolution, fps, seconds, hash, date_original, date_last_watched) VALUES(@name, @path, @file_size, @resolution,@fps, @seconds, @hash, @date_original, @date_last_watched)";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@name", name);
+            command.Parameters.AddWithValue("@path", path);
+            command.Parameters.AddWithValue("@file_size", fileSize);
+            command.Parameters.AddWithValue("@resolution",resolution);
+            command.Parameters.AddWithValue("@fps", fps);
+            command.Parameters.AddWithValue("@seconds", seconds);
+            command.Parameters.AddWithValue("@hash", hash);
+            command.Parameters.AddWithValue("@date_original", date_original);
+            command.Parameters.AddWithValue("@date_last_watched", date_last_watched);
+
+            command.ExecuteNonQuery();
+        }
+
+        public CategoryModel AddCategory(string name)
+        {
+            string sql = "INSERT INTO categories(name) VALUES(@name)";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@name", name);
+
+            command.ExecuteNonQuery();
+
+            return FindCategoryByName(name);
+        }
+
+        public void AddTag(string name, string categoryName)
+        {
+            //sql get category by name
+            //if category exists, get category id and use it to insert new tag
+            //add Tag
+
+            CategoryModel category = FindCategoryByName(categoryName);
+            string sql = "INSERT INTO tags(name, category) VALUES(@name, @category)";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@name", name);
+            command.Parameters.AddWithValue("@category", category.Id);
+
+            command.ExecuteNonQuery();
+        }
+        
+        public void AddTagToVideo(VideoModel video, TagModel tag)
+        {
+            AddTagToVideo(video.Id, tag.Id);
+        }
+
+        public void AddTagToVideo(long videoId, long tagId)
+        {
+            string sql = "INSERT INTO video_tags(video_id, tag_id) VALUES (@videoId, @tagId)";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@videoId", videoId);
+            command.Parameters.AddWithValue("@tagId", tagId);
+
+            command.ExecuteNonQuery();
+        }
+
+        public List<TagModel> FindVideoTags(VideoModel video)
+        {
+            return FindVideoTags(video.Id);
+        }
+
+        public List<TagModel> FindVideoTags(long videoId)
+        {
+            List<TagModel> videoTags = new List<TagModel>();
+
+            string sql = "SELECT * FROM video_tags WHERE video_id = @videoId";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@videoId", videoId);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+               videoTags.Add(FindTag((long)reader["tag_id"]));
+            }
+
+            return videoTags;
+        }
+
+        public TagModel FindTag(long tagId)
+        {
+            string sql = "SELECT * FROM tags WHERE id = @tagId";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@tagId", tagId);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            reader.Read();
+            return new TagModel((long)reader["id"], (string)reader["name"], (long)reader["category"]);
+            
+        }
+
+
+        public List<TagModel> FindTagsByCategory(CategoryModel category)
+        {
+            return FindTagsByCategory(category.Id);
+        }
+
+        public List<TagModel> FindTagsByCategory(long categoryId)
+        {
+            List<TagModel> tags = new List<TagModel>();
+            string sql = "SELECT * FROM tags WHERE category = @categoryId";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@categoryId", categoryId);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read()) {
+                TagModel model = new TagModel((long)reader["id"], (string)reader["name"], (long)reader["category"]);
+                tags.Add(model);
+            }
+            return tags;
+        }
+
+        public CategoryModel FindCategory(long categoryId)
+        {
+            string sql = "SELECT * FROM categories WHERE id = @categoryId";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@categoryId", categoryId);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                return new CategoryModel((long)reader["id"],(string)reader["name"]);
+            }
+            return null;
+        }
+
+        public CategoryModel FindCategoryByName(string categoryName)
+        {
+            string sql = "SELECT * FROM categories WHERE name = @categoryName";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@categoryName", categoryName);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                return new CategoryModel((long)reader["id"], (string)reader["name"]);
+            }
+            return null;
+        }
+
+        public List<CategoryModel> FindAllCategories()
+        {
+            if (!IsConnectionOpen()) return null;
+            List<CategoryModel> categories = new List<CategoryModel>();
+
+            string sql = "SELECT * FROM categories";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                CategoryModel c = new CategoryModel();
+                c.Id = (long) reader["id"];
+                c.Name = (string)reader["name"];
+
+                categories.Add(c);
+            }
+
+            return categories;
         }
 
         //Finds All videos from the database
@@ -112,7 +257,7 @@ namespace VideoOrganizer
 
         public List<VideoModel> FindVideos(string fileName)
         {
-            if (!IsConnectionOpen()) return null;
+            if (!IsConnectionOpen()) throw new Exception();
             List<VideoModel> videos = new List<VideoModel>();
 
             string getVideoQuery = "SELECT * FROM Videos WHERE name LIKE @name";
