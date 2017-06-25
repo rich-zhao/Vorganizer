@@ -32,6 +32,7 @@ namespace VideoOrganizer.Model
         public DateTime DateAdded { get; set; }
         public DateTime DateOriginal { get; set; }
         public DateTime DateLastWatched { get; set; }
+        public List<TagModel> Tags { get; set; }
 
         public VideoModel()
         {
@@ -41,6 +42,7 @@ namespace VideoOrganizer.Model
         public VideoModel(int id, string Name, string Path, bool IsFavorite, string FileSize, long PlayCount,
             long Rating, string Resolution, long Fps, long Minutes, DateTime DateAdded)
         {
+            this.Id = id;
             this.Name = Name;
             this.Path = Path;
             this.IsFavorite = IsFavorite;
@@ -51,6 +53,7 @@ namespace VideoOrganizer.Model
             this.Fps = Fps;
             this.Minutes = Minutes;
             this.DateAdded = DateAdded;
+            this.Tags = DatabaseService.Instance.FindVideoTags(id);
         }
     }
 }
