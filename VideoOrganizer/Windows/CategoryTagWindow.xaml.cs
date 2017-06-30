@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace VideoOrganizer.Windows
     {
         private List<CategoryModel> categories;
         DatabaseService dbService;
-        private VideoModel currVideo;
+        private List<VideoModel> videos;
 
         public CategoryTagWindow()
         {
@@ -34,15 +35,20 @@ namespace VideoOrganizer.Windows
             UpdateCategories();
         }
 
+        public CategoryTagWindow(VideoModel currVideo) : this()
+        {
+            videos = new List<VideoModel> { currVideo };
+        }
+
+        public CategoryTagWindow(List<VideoModel> videos) : this()
+        {
+            this.videos = videos;
+        }
+
         private void UpdateCategories()
         {
             categories = dbService.FindAllCategories();
             cbCategory.ItemsSource = categories;
-        }
-
-        public CategoryTagWindow(VideoModel currVideo) : this()
-        {
-            this.currVideo = currVideo;
         }
 
         private void btnAddCategory_Click(object sender, RoutedEventArgs e)
@@ -54,7 +60,17 @@ namespace VideoOrganizer.Windows
 
         private void btnAddTag_Click(object sender, RoutedEventArgs e)
         {
-            dbService.AddTagToVideo(currVideo, (TagModel)cbTag.SelectedItem);
+            if (rbAddNewTag.IsChecked.Value)
+            {
+                Debug.Write("Adding new tag and then adding tag to video");
+                dbService.AddTag(tbAddTag.Text, cbCategory.Text);
+                videos.ForEach(video => dbService.AddTagToVideo(video, dbService.FindTagByName(tbAddTag.Text)));
+            }
+            else
+            {
+                Debug.Write("Adding existing tag to video");
+                videos.ForEach(video => dbService.AddTagToVideo(video, (TagModel)cbTag.SelectedItem));
+            }
             
             this.Close();
         }
@@ -65,6 +81,23 @@ namespace VideoOrganizer.Windows
             List<TagModel> tags =dbService.FindTagsByCategory((CategoryModel)cbCategory.SelectedItem);
             cbTag.ItemsSource = tags;
             tags.ForEach(x => Debug.WriteLine(x.Tag));
+        }
+        
+
+        private void rbTag_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton selectedButton = (RadioButton)sender;
+            if (selectedButton.Name.Equals("rbSelectTag"))
+            {
+                cbTag.IsEnabled = true;
+                tbAddTag.IsEnabled = false;
+            }
+            else
+            {
+                cbTag.IsEnabled = false;
+                tbAddTag.IsEnabled = true;
+                tbAddTag.Text = tbAddTag.Text.Equals("Add new tag") ? "" : tbAddTag.Text;
+            }
         }
     }
 }

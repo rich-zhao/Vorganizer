@@ -123,7 +123,8 @@ namespace VideoOrganizer
         
         public void AddTagToVideo(VideoModel video, TagModel tag)
         {
-            AddTagToVideo(video.Id, tag.Id);
+            if(tag != null)
+                AddTagToVideo(video.Id, tag.Id);
         }
 
         public void AddTagToVideo(long videoId, long tagId)
@@ -170,6 +171,17 @@ namespace VideoOrganizer
             
         }
 
+        public TagModel FindTagByName(string tagName)
+        {
+            string sql = "SELECT * FROM tags WHERE name = @tagName";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@tagName", tagName);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            reader.Read();
+            return new TagModel((long)reader["id"], (string)reader["name"], (long)reader["category"]);
+
+        }
 
         public List<TagModel> FindTagsByCategory(CategoryModel category)
         {
@@ -268,6 +280,24 @@ namespace VideoOrganizer
             ParseVideos(reader, videos);
             
             return videos;
+        }
+
+        /// <summary>
+        /// Deletes Video from the database and its associated records in other tables
+        /// </summary>
+        public void DeleteVideo(VideoModel video)
+        {
+            DeleteVideo(video.Id);
+
+        }
+        public void DeleteVideo(long videoId)
+        {
+            string sql = "DELETE FROM videos WHERE id = @videoId; " +
+                "DELETE FROM video_tags WHERE video_id = @videoId";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@videoId", videoId);
+            command.ExecuteNonQuery();
+
         }
 
         public void UpdateVideo(VideoModel video)

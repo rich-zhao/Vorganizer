@@ -26,6 +26,7 @@ namespace VideoOrganizer
         private List<VideoModel> videos = new List<VideoModel>();
         private LogService Logger;
         private VideoModel currVideo;
+        private Dictionary<long, CategoryModel> categoryModelsMap;
         private NReco.VideoConverter.FFMpegConverter ffMpeg;
 
         public MainPage()
@@ -231,24 +232,35 @@ namespace VideoOrganizer
 
         public Dictionary<CategoryModel, List<TagModel>> UpdateVideoTags(VideoModel video)
         {
+            List<UIElement> stackPanelCollection = new List<UIElement>();
+            foreach(UIElement child in stackPanelTags.Children){
+                if (child.Uid.Contains("taggedChildren"))
+                {
+                    stackPanelCollection.Add(child);
+                }
+            }
+            stackPanelCollection.ForEach(uiElement => stackPanelTags.Children.Remove(uiElement));
             Dictionary<CategoryModel, List<TagModel>> videoTags = new Dictionary<CategoryModel, List<TagModel>>();
             List<TagModel> allTags = dbService.FindVideoTags(video);
-            Dictionary<long, CategoryModel> CategoryModelsMap = allTags.Select(tags => tags.Category)
+            categoryModelsMap = allTags.Select(tags => tags.Category)
                                                                         .GroupBy(cat => cat.Id)
                                                                         .Select(cat => cat.First())
                                                                         .ToDictionary(cat => cat.Id);
 
             videoTags = allTags.GroupBy(tags => tags.Category.Id)
-                                .ToDictionary(group => CategoryModelsMap[group.Key], group => group.ToList());
+                                .ToDictionary(group => categoryModelsMap[group.Key], group => group.ToList());
 
-            CategoryModelsMap.Values.ToList().ForEach(category => {
+            categoryModelsMap.Values.ToList().ForEach(category => {
                 //creates label
                 Label lblCat = new Label();
+                lblCat.Uid = "taggedChildrenLbl_" + category.Id;
                 lblCat.Content = category.Name;
                 stackPanelTags.Children.Add(lblCat);
 
                 //adds listbox of Tags
                 ListBox listBoxTags = new ListBox();
+                listBoxTags.Uid = "taggedChildrenListBox_" + category.Name;
+
                 videoTags[category].ForEach(tag => {
                     listBoxTags.Items.Add(tag.Tag);
                     listBoxTags.MouseDoubleClick += new MouseButtonEventHandler(element_TagDoubleClick);
@@ -261,6 +273,7 @@ namespace VideoOrganizer
 
         private void element_TagDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            //can get from listBox_categoryName
             throw new NotImplementedException();
         }
 
@@ -317,6 +330,33 @@ namespace VideoOrganizer
             };
             
             window.ShowDialog();
+        }
+
+        private void menuItemOrg_AddTag(object sender, RoutedEventArgs e)
+        {
+            CategoryTagWindow window = new CategoryTagWindow(lvOrganize.SelectedItems as List<VideoModel>)
+            {
+                Owner = Application.Current.MainWindow
+            };
+
+            window.ShowDialog();
+        }
+
+        private void menuItemOrg_Delete(object sender, RoutedEventArgs e)
+        {
+            foreach(VideoModel video in lvOrganize.SelectedItems)
+            {
+                dbService.DeleteVideo(video);
+            }
+
+            lvOrganize.ItemsSource = dbService.FindAllVideos();
+        }
+
+        private void lvOrganize_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key.Equals(Key.Delete)){
+                menuItemOrg_Delete(sender, e);
+            }
         }
     }
 }

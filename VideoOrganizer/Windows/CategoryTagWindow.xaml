@@ -21,7 +21,17 @@
             <ComboBox x:Name="cbCategory" DisplayMemberPath="Name" SelectionChanged="cbCategory_SelectionChanged"/>
 
             <Label Content="Select Tag" FontWeight="Bold"/>
-            <ComboBox x:Name="cbTag" DisplayMemberPath="Tag"/>
+
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <RadioButton x:Name="rbSelectTag" VerticalAlignment="Center" GroupName="tag" Click="rbTag_Checked" IsChecked="True"/>
+                <ComboBox x:Name="cbTag" DisplayMemberPath="Tag" Width="193"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <RadioButton x:Name="rbAddNewTag"  VerticalAlignment="Center" GroupName="tag" Click="rbTag_Checked"/>
+                <TextBox x:Name="tbAddTag" Width="196" Text="Add new tag" IsEnabled="False"/>
+            </StackPanel>
 
             <Button x:Name="btnAddExistingCategory" Content="Add" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Width="55" Height="23" Click="btnAddTag_Click"/>
 

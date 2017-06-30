@@ -31,7 +31,7 @@
                     <Button x:Name="btnSearch" Content="Search" HorizontalAlignment="Left" Margin="144,37,0,0" VerticalAlignment="Top" Width="55" Click="btnSearch_Click" Height="23"/>
                     <TextBox x:Name="tbSearch" HorizontalAlignment="Left" Height="23" Margin="10,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="tbSearch_KeyDown"/>
 
-                    <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch" MouseDoubleClick="lvOrganize_MouseDoubleClick">
+                    <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch" MouseDoubleClick="lvOrganize_MouseDoubleClick" KeyUp="lvOrganize_KeyUp">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
@@ -46,6 +46,12 @@
                                 <GridViewColumn Header="Date Added" Width="200" DisplayMemberBinding="{Binding DateAdded}"/>
                             </GridView>
                         </ListView.View>
+                        <ListView.ContextMenu>
+                            <ContextMenu Name="menuItemOrg">
+                                <MenuItem Header="Add Tag" Click="menuItemOrg_AddTag"/>
+                                <MenuItem Header="Delete" Click="menuItemOrg_Delete"/>
+                            </ContextMenu> 
+                        </ListView.ContextMenu>
                     </ListView>
                     <Label x:Name="label" Content="Search Files" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Right" Margin="10,37,10,10" VerticalAlignment="Top" Width="55" Click="btnEdit_Click" Height="23"/>
