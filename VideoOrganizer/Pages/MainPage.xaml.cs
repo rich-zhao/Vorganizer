@@ -92,6 +92,7 @@ namespace VideoOrganizer
                     Logger.Log(string.Format("Failed to import {0} files", result.Result.Item2));
                 Dispatcher.Invoke(() => lvOrganize.ItemsSource = dbService.FindAllVideos());
             });
+            scrollViewLog.ScrollToBottom();
         }
 
         /// <summary>
