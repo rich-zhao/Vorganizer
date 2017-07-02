@@ -95,8 +95,31 @@ namespace VideoOrganizer
             command.ExecuteNonQuery();
         }
 
+        public void AddVideo(VideoModel video)
+        {
+            string sql = "INSERT INTO videos (name, path, file_size, resolution, fps, seconds, hash, date_original, date_last_watched) VALUES(@name, @path, @file_size, @resolution,@fps, @seconds, @hash, @date_original, @date_last_watched)";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@name", video.Name);
+            command.Parameters.AddWithValue("@path", video.Path);
+            command.Parameters.AddWithValue("@file_size", video.FileSize);
+            command.Parameters.AddWithValue("@resolution", video.Resolution);
+            command.Parameters.AddWithValue("@fps", video.Fps);
+            command.Parameters.AddWithValue("@seconds", video.Minutes);
+            command.Parameters.AddWithValue("@hash", "");
+            command.Parameters.AddWithValue("@date_original", video.DateOriginal);
+            command.Parameters.AddWithValue("@date_last_watched", video.DateLastWatched);
+
+            command.ExecuteNonQuery();
+        }
+
         public CategoryModel AddCategory(string name)
         {
+            name = name.Trim();
+            //check if already exists
+            CategoryModel category = FindAllCategories().Find(cat => cat.Name.Equals(name));
+            if (category != null) return category;
+
+            //if not exist then add
             string sql = "INSERT INTO categories(name) VALUES(@name)";
             SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@name", name);
@@ -108,11 +131,15 @@ namespace VideoOrganizer
 
         public void AddTag(string name, string categoryName)
         {
+            name = name.Trim();
+
             //sql get category by name
             //if category exists, get category id and use it to insert new tag
             //add Tag
 
             CategoryModel category = FindCategoryByName(categoryName);
+            if (category == null) return;
+
             string sql = "INSERT INTO tags(name, category) VALUES(@name, @category)";
             SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@name", name);
@@ -123,12 +150,16 @@ namespace VideoOrganizer
         
         public void AddTagToVideo(VideoModel video, TagModel tag)
         {
-            if(tag != null)
+            if(tag != null && video != null)
                 AddTagToVideo(video.Id, tag.Id);
         }
 
         public void AddTagToVideo(long videoId, long tagId)
         {
+            //check to see if tag already exists in video
+            if(FindVideoTags(videoId).Exists(tag => tag.Id.Equals(tagId))) return;
+
+            //if not add tag to video
             string sql = "INSERT INTO video_tags(video_id, tag_id) VALUES (@videoId, @tagId)";
             SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@videoId", videoId);
@@ -343,6 +374,15 @@ namespace VideoOrganizer
                     video.DateLastWatched = (DateTime)reader["date_last_watched"];
                 videos.Add(video);
             }
+        }
+
+        public void DeleteTagFromVideo(VideoModel video, TagModel tag)
+        {
+            string sql = "DELETE FROM video_tags WHERE video_id = @videoId AND tag_id = @tagId";
+            SQLiteCommand command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@videoId", video.Id);
+            command.Parameters.AddWithValue("@tagId", tag.Id);
+            command.ExecuteNonQuery();
         }
 
         /// <summary>
