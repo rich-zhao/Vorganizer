@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -25,7 +26,6 @@ namespace VideoOrganizer
     public partial class MainPage : Page
     {
         private DatabaseService dbService;
-        private List<VideoModel> videos = new List<VideoModel>();
         private LogService Logger;
         private VideoModel currVideo;
         private Dictionary<long, CategoryModel> categoryModelsMap;
@@ -37,9 +37,8 @@ namespace VideoOrganizer
             InitializeComponent();
             this.DataContext = this;
             dbService = DatabaseService.Instance;
-            videos = dbService.FindAllVideos();
             currVideo = null;
-            if (videos != null)
+            if (lvOrganize.ItemsSource == null)
             {
                 lvOrganize.ItemsSource = dbService.FindAllVideos();
             }
@@ -75,6 +74,8 @@ namespace VideoOrganizer
         /// <param name="files"></param>
         private async void ParseAndImportFiles(String[] files)
         {
+            Logger.Log(string.Format("Beginning Import..."));
+
             await Task<Tuple<int, int>>.Factory.StartNew(() =>
             {
                 int validFiles = 0, invalidFiles = 0;
@@ -87,6 +88,7 @@ namespace VideoOrganizer
                 return Tuple.Create<int, int>(validFiles, invalidFiles);
             }).ContinueWith((result) =>
             {
+                Logger.Log(string.Format("Import complete!"));
                 Logger.Log(string.Format("Imported {0} files", result.Result.Item1));
                 if (result.Result.Item2 != 0)
                     Logger.Log(string.Format("Failed to import {0} files", result.Result.Item2));
@@ -179,8 +181,17 @@ namespace VideoOrganizer
                 double fileDuration = inputFile.Metadata.Duration.TotalSeconds;
                 DateTime dateOriginal = fileInfo.LastWriteTime;
 
-                dbService.AddVideo(fileName, path, fileSize.ToString(), fileResolution,
-                        fileFps, fileDuration.ToString(), "", dateOriginal, new DateTime());
+                //checks if there is a duplicate found, if found, do nothing, else add it
+                if ((lvOrganize.ItemsSource as List<VideoModel>).FirstOrDefault(x => x.Path.Equals(path)) == null)
+                {
+                    dbService.AddVideo(fileName, path, fileSize.ToString(), fileResolution,
+                            fileFps, fileDuration.ToString(), "", dateOriginal, new DateTime());
+                }
+                else
+                {
+                    invalidFiles++;
+                    validFiles--;
+                }
                 //lvOrganize.ItemsSource = dbService.FindAllVideos();
             }
 
@@ -216,6 +227,7 @@ namespace VideoOrganizer
         /// </summary>
         private void SetupEditPage()
         {
+            //sets all edit page information
             if(currVideo == null) return;
             lbEditName.DataContext = currVideo;
             lbEditFilePath.DataContext = currVideo;
@@ -240,6 +252,8 @@ namespace VideoOrganizer
             thumbNailSource.EndInit();
             videoThumbnail.Source = thumbNailSource;
             */
+
+            //creates thumbnail
             try
             { 
                 var thumbNailSource = new BitmapImage();
@@ -261,6 +275,7 @@ namespace VideoOrganizer
                 videoThumbnail.Source = null;
             }
 
+            //opens up side panel
             ChildGrid.ColumnDefinitions[2].Width = new GridLength(this.WindowWidth / 3);
 
             UpdateVideoTags(currVideo);
@@ -291,6 +306,7 @@ namespace VideoOrganizer
             videoTags = allTags.GroupBy(tags => tags.Category.Id)
                                 .ToDictionary(group => categoryModelsMap[group.Key], group => group.ToList());
 
+            //creates UI elements for category and tags
             categoryModelsMap.Values.ToList().ForEach(category => {
                 //creates label
                 Label lblCat = new Label();
@@ -302,18 +318,39 @@ namespace VideoOrganizer
                 ListBox listBoxTags = new ListBox();
                 listBoxTags.Uid = "taggedChildrenListBox_" + category.Name;
                 listBoxTags.MouseDoubleClick += new MouseButtonEventHandler(element_TagDoubleClick);
-                MenuItem mItem = new MenuItem();
-                mItem.Header = "Delete Tag";
-                mItem.Click += menuItemOrg_DeleteTag;
-                listBoxTags.ContextMenu = new ContextMenu();
-                listBoxTags.ContextMenu.Items.Add(mItem);
+                listBoxTags.KeyUp += new KeyEventHandler(element_TagKeyUp);
+
+                //create datatemplate
+
+                var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
+                textBlockFactory.SetValue(TextBlock.TextProperty, new Binding(". Tag"));
+                var template = new DataTemplate();
+                template.VisualTree = textBlockFactory;
+                listBoxTags.ItemTemplate = template;
+
+                //MenuItem mItem = new MenuItem();
+                //mItem.Header = "Delete Tag";
+                //mItem.Click += menuItemOrg_DeleteTag;
+                //listBoxTags.ContextMenu = new ContextMenu();
+                //listBoxTags.ContextMenu.Items.Add(mItem);
                 videoTags[category].ForEach(tag => {
-                    listBoxTags.Items.Add(tag.Tag);
+                    listBoxTags.Items.Add(tag);
                 });
                 stackPanelTags.Children.Add(listBoxTags);
             });
             
             return videoTags;
+        }
+
+        private void element_TagKeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Delete)
+            {
+                Logger.Log(string.Format("Deleting..."));
+                dbService.DeleteTagFromVideo(currVideo, ((sender as ListBox).SelectedItem as TagModel));
+                UpdateVideoTags(currVideo);
+                Logger.Log(string.Format("Done!"));
+            }
         }
 
         private void element_TagDoubleClick(object sender, MouseButtonEventArgs e)
@@ -407,12 +444,14 @@ namespace VideoOrganizer
         /// <param name="e"></param>
         private void menuItemOrg_Delete(object sender, RoutedEventArgs e)
         {
-            foreach(VideoModel video in lvOrganize.SelectedItems)
+            Logger.Log(string.Format("Deleting..."));
+            foreach (VideoModel video in lvOrganize.SelectedItems)
             {
                 dbService.DeleteVideo(video);
             }
 
             lvOrganize.ItemsSource = dbService.FindAllVideos();
+            Logger.Log(string.Format("Done!"));
         }
 
         private void menuItemOrg_DeleteTag(object sender, RoutedEventArgs e)
@@ -429,6 +468,7 @@ namespace VideoOrganizer
         {
             if(e.Key.Equals(Key.Delete)){
                 menuItemOrg_Delete(sender, e);
+                
             }
         }
 
