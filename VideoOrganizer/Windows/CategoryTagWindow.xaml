@@ -23,13 +23,13 @@
             <Label Content="Select Tag" FontWeight="Bold"/>
 
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <RadioButton x:Name="rbSelectTag" VerticalAlignment="Center" GroupName="tag" Click="rbTag_Checked" IsChecked="True"/>
+            <StackPanel x:Name="spSelectTag" Orientation="Horizontal" Margin="0,0,0,10" MouseUp="Tag_Checked" >
+                <RadioButton x:Name="rbSelectTag" VerticalAlignment="Center" GroupName="tag" Click="Tag_Checked" IsChecked="True"/>
                 <ComboBox x:Name="cbTag" DisplayMemberPath="Tag" Width="193"/>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="rbAddNewTag"  VerticalAlignment="Center" GroupName="tag" Click="rbTag_Checked"/>
+            <StackPanel x:Name="spAddTag" Orientation="Horizontal" MouseUp="Tag_Checked" >
+                <RadioButton x:Name="rbAddNewTag"  VerticalAlignment="Center" GroupName="tag" Click="Tag_Checked" />
                 <TextBox x:Name="tbAddTag" Width="196" Text="Add new tag" IsEnabled="False"/>
             </StackPanel>
 

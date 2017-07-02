@@ -77,26 +77,48 @@ namespace VideoOrganizer.Windows
 
         private void cbCategory_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Debug.WriteLine(((CategoryModel)cbCategory.SelectedItem).Name);
+            //Debug.WriteLine(((CategoryModel)cbCategory.SelectedItem).Name);
             List<TagModel> tags =dbService.FindTagsByCategory((CategoryModel)cbCategory.SelectedItem);
             cbTag.ItemsSource = tags;
             tags.ForEach(x => Debug.WriteLine(x.Tag));
         }
         
 
-        private void rbTag_Checked(object sender, RoutedEventArgs e)
+        private void Tag_Checked(object sender, RoutedEventArgs e)
         {
-            RadioButton selectedButton = (RadioButton)sender;
-            if (selectedButton.Name.Equals("rbSelectTag"))
+            //TODO: REFACTOR
+            if (sender is RadioButton)
             {
-                cbTag.IsEnabled = true;
-                tbAddTag.IsEnabled = false;
+                RadioButton selectedButton = (RadioButton)sender;
+                if (selectedButton.Name.Equals("rbSelectTag"))
+                {
+                    cbTag.IsEnabled = true;
+                    tbAddTag.IsEnabled = false;
+                }
+                else
+                {
+                    cbTag.IsEnabled = false;
+                    tbAddTag.IsEnabled = true;
+                    tbAddTag.Text = tbAddTag.Text.Equals("Add new tag") ? "" : tbAddTag.Text;
+                }
             }
-            else
+            else if (sender is StackPanel)
             {
-                cbTag.IsEnabled = false;
-                tbAddTag.IsEnabled = true;
-                tbAddTag.Text = tbAddTag.Text.Equals("Add new tag") ? "" : tbAddTag.Text;
+                if (((StackPanel)sender).Name.Equals("spSelectTag"))
+                {
+                    cbTag.IsEnabled = true;
+                    tbAddTag.IsEnabled = false;
+
+                    rbSelectTag.IsChecked = true;
+                }
+                else
+                {
+                    cbTag.IsEnabled = false;
+                    tbAddTag.IsEnabled = true;
+                    tbAddTag.Text = tbAddTag.Text.Equals("Add new tag") ? "" : tbAddTag.Text;
+
+                    rbAddNewTag.IsChecked = true;
+                }
             }
         }
     }

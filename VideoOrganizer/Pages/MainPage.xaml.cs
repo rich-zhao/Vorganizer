@@ -239,17 +239,25 @@ namespace VideoOrganizer
             thumbNailSource.EndInit();
             videoThumbnail.Source = thumbNailSource;
             */
-            var thumbNailSource = new BitmapImage();
-            using (var memStream = new MemoryStream())
+            try
+            { 
+                var thumbNailSource = new BitmapImage();
+                using (var memStream = new MemoryStream())
+                {
+                    ffMpeg.GetVideoThumbnail(currVideo.Path, memStream, 60f);
+                    memStream.Position = 0;
+                    thumbNailSource.BeginInit();
+                    thumbNailSource.CacheOption = BitmapCacheOption.OnLoad;
+                    thumbNailSource.StreamSource = memStream;
+                    thumbNailSource.EndInit();
+                    thumbNailSource.Freeze();
+                    videoThumbnail.Source = thumbNailSource;
+                }
+            }
+            catch (System.NotSupportedException)
             {
-                ffMpeg.GetVideoThumbnail(currVideo.Path, memStream, 60f);
-                memStream.Position = 0;
-                thumbNailSource.BeginInit();
-                thumbNailSource.CacheOption = BitmapCacheOption.OnLoad;
-                thumbNailSource.StreamSource = memStream;
-                thumbNailSource.EndInit();
-                thumbNailSource.Freeze();
-                videoThumbnail.Source = thumbNailSource;
+                Logger.Log("Couldn't create screenshot");
+                videoThumbnail.Source = null;
             }
 
             ChildGrid.ColumnDefinitions[2].Width = new GridLength(this.WindowWidth / 3);
@@ -381,12 +389,14 @@ namespace VideoOrganizer
         /// <param name="e"></param>
         private void menuItemOrg_AddTag(object sender, RoutedEventArgs e)
         {
+            //TODO REFACTOR WITH btnAddTag_Click
             CategoryTagWindow window = new CategoryTagWindow(lvOrganize.SelectedItems)
             {
                 Owner = Application.Current.MainWindow
             };
 
             window.ShowDialog();
+            UpdateVideoTags(currVideo);
         }
 
         /// <summary>
