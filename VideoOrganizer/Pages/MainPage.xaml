@@ -16,103 +16,109 @@
         </Grid.RowDefinitions>
         <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0">
             <TabItem Header="Add">
-                <Grid Background="#FFE5E5E5" Margin="0,0,0,0">
-                    <Label x:Name="dragNdrop" Content="Label" HorizontalAlignment="Left" Margin="56,65,0,0" VerticalAlignment="Top"/>
-                </Grid>
+                <StackPanel Background="#FFE5E5E5" Margin="0,0,0,0">
+                    <Label FontSize="25" Content="Add Videos" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <Label Content="Drag and Drop into the window to add videos. You can also add videos by clicking on the 'Add Video' button below"/>
+                    <Button x:Name="btnAdd" Content="Add Video" Click="btnAdd_Click" Height="45" Width="150" Margin="0,10,0,0"/>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Organize">
-                <Grid Name="ChildGrid" Background="#FFE5E5E5" Margin="0,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Stretch" Height="90" Stroke="Black" VerticalAlignment="Top"/>
-                    <Button x:Name="btnSearch" Content="Search" HorizontalAlignment="Left" Margin="144,37,0,0" VerticalAlignment="Top" Width="55" Click="btnSearch_Click" Height="23"/>
-                    <TextBox x:Name="tbSearch" HorizontalAlignment="Left" Height="23" Margin="10,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="tbSearch_KeyDown"/>
-
-                    <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch" MouseDoubleClick="lvOrganize_MouseDoubleClick" KeyUp="lvOrganize_KeyUp">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
-                                <GridViewColumn Header="Path" Width="200" DisplayMemberBinding="{Binding Path}"/>
-                                <GridViewColumn Header="Favorite" Width="100" DisplayMemberBinding="{Binding IsFavorite}"/>
-                                <GridViewColumn Header="File Size" Width="100" DisplayMemberBinding="{Binding FileSize}"/>
-                                <GridViewColumn Header="Play Count" Width="100" DisplayMemberBinding="{Binding PlayCount}"/>
-                                <GridViewColumn Header="Rating" Width="50" DisplayMemberBinding="{Binding Rating}"/>
-                                <GridViewColumn Header="Resolution" Width="100" DisplayMemberBinding="{Binding Resolution}"/>
-                                <GridViewColumn Header="Fps" Width="50" DisplayMemberBinding="{Binding Fps}"/>
-                                <GridViewColumn Header="Minutes" Width="75" DisplayMemberBinding="{Binding Minutes}"/>
-                                <GridViewColumn Header="Date Added" Width="200" DisplayMemberBinding="{Binding DateAdded}"/>
-                            </GridView>
-                        </ListView.View>
-                        <ListView.ContextMenu>
-                            <ContextMenu Name="menuItemOrg">
-                                <MenuItem Header="Add Tag" Click="menuItemOrg_AddTag"/>
-                                <MenuItem Header="Delete" Click="menuItemOrg_Delete"/>
-                            </ContextMenu> 
-                        </ListView.ContextMenu>
-                    </ListView>
-                    <Label x:Name="label" Content="Search Files" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Right" Margin="10,37,10,10" VerticalAlignment="Top" Width="55" Click="btnEdit_Click" Height="23"/>
-
-                    <GridSplitter Name="VerticalGS" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
-                    <StackPanel Name="FileInfo" Grid.Column="2">
-                        <WrapPanel>
-                            <Button x:Name="btnCloseEdit" Content="Close" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="55" Click="btnCloseEdit_Click" Height="23"/>
-                            <Button x:Name="btnSaveEdit" Content="Save" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="55" Click="btnSaveEdit_Click" Height="23"/>
-                        </WrapPanel>
-                        <Label FontSize="25" Content="File Details" FontWeight="Bold"/>
-                        <Image x:Name="videoThumbnail" Grid.Column="2" HorizontalAlignment="Left" Height="Auto" Margin="0,0,0,0" VerticalAlignment="Top" Width="300"/>
-                        <Grid>
+                <Grid Height="auto" >
+                        <Grid Name="ChildGrid" Background="#FFE5E5E5" Margin="0,0,0,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="5"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Label Grid.Column="0" Grid.Row="0" >File Name:</Label>
-                            <Label Grid.Column="1"  Grid.Row="0" x:Name="lbEditName" Content="{Binding Name}"/>
-                            <Label Grid.Column="0" Grid.Row="1">File Path:</Label>
-                            <Label  Grid.Column="1" Grid.Row="1" x:Name="lbEditFilePath" Content="{Binding Path}"/>
-                            <Label Grid.Column="0" Grid.Row="2">Favorite:</Label>
-                            <CheckBox  Grid.Column="1"  Grid.Row="2" x:Name="lbEditFavorite"  IsChecked="{Binding IsFavorite}"/>
-                            <Label Grid.Column="0" Grid.Row="3">File Size:</Label>
-                            <Label  Grid.Column="1" Grid.Row="3" x:Name="lbEditFileSize" Content="{Binding FileSize}" ContentStringFormat="{}{0} mb"/>
-                            <Label Grid.Column="0" Grid.Row="4">Play Count:</Label>
-                            <Label  Grid.Column="1" Grid.Row="4" x:Name="lbEditPlayCount" Content="{Binding PlayCount}"/>
-                            <Label Grid.Column="0" Grid.Row="5">Rating:</Label>
-                            <Label  Grid.Column="1" Grid.Row="5" x:Name="lbEditRating" Content="{Binding Rating}"/>
-                            <Label Grid.Column="0" Grid.Row="6">Resolution:</Label>
-                            <Label  Grid.Column="1" Grid.Row="6" x:Name="lbEditResolution" Content="{Binding Resolution}"/>
-                            <Label Grid.Column="0" Grid.Row="7">Frames Per Second:</Label>
-                            <Label  Grid.Column="1" Grid.Row="7" x:Name="lbEditFps" Content="{Binding Fps}"/>
-                            <Label Grid.Column="0" Grid.Row="8">Duration:</Label>
-                            <Label  Grid.Column="1" Grid.Row="8" x:Name="lbEditDuration" Content="{Binding Minutes}" ContentStringFormat="{}{0} minutes"/>
-                            <Label Grid.Column="0" Grid.Row="9">Date Added:</Label>
-                            <Label Grid.Column="1" Grid.Row="9" x:Name="lbEditDateAdded" Content="{Binding DateAdded}"/>
-                            <Label Grid.Column="0" Grid.Row="10">Date Last Watched:</Label>
-                            <Label Grid.Column="1"  Grid.Row="10" x:Name="lbEditDateLastWatched" Content="{Binding DateLastWatched}"/>
-                            <Label Grid.Column="0" Grid.Row="11">Original Date:</Label>
-                            <Label Grid.Column="1"  Grid.Row="11" x:Name="lbEditOriginalDate" Content="{Binding DateOriginal}"/>
-                        </Grid>
+                            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Stretch" Height="90" Stroke="Black" VerticalAlignment="Top"/>
+                            <Button x:Name="btnSearch" Content="Search" HorizontalAlignment="Left" Margin="144,37,0,0" VerticalAlignment="Top" Width="55" Click="btnSearch_Click" Height="23"/>
+                            <TextBox x:Name="tbSearch" HorizontalAlignment="Left" Height="23" Margin="10,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="tbSearch_KeyDown"/>
 
-                        <StackPanel Name="stackPanelTags">
-                            <Label Name="lbTag" FontSize="25" Content="Organize" FontWeight="Bold"/>
-                            <Button x:Name="btnAddCategory" Content="Add Category" Height="30" Margin="0,0,0,0" Click="btnAddCategory_Click" />
-                            <!--<ListBox x:Name="listBoxCatTags"
+                            <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch" MouseDoubleClick="lvOrganize_MouseDoubleClick" KeyUp="lvOrganize_KeyUp" MouseUp="lvOrganize_MouseDoubleClick">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Name}"/>
+                                        <GridViewColumn Header="Path" Width="Auto" DisplayMemberBinding="{Binding Path}"/>
+                                        <GridViewColumn Header="Favorite" Width="Auto" DisplayMemberBinding="{Binding IsFavorite}"/>
+                                        <GridViewColumn Header="File Size" Width="Auto" DisplayMemberBinding="{Binding FileSize, StringFormat={}{0} MB}"/>
+                                        <GridViewColumn Header="Play Count" Width="Auto" DisplayMemberBinding="{Binding PlayCount}"/>
+                                        <GridViewColumn Header="Rating" Width="Auto" DisplayMemberBinding="{Binding Rating}"/>
+                                        <GridViewColumn Header="Resolution" Width="Auto" DisplayMemberBinding="{Binding Resolution}"/>
+                                        <GridViewColumn Header="Fps" Width="Auto" DisplayMemberBinding="{Binding Fps}"/>
+                                        <GridViewColumn Header="Minutes" Width="Auto" DisplayMemberBinding="{Binding Minutes, StringFormat={}{0} mins}"/>
+                                        <GridViewColumn Header="Date Added" Width="Auto" DisplayMemberBinding="{Binding DateAdded}"/>
+                                    </GridView>
+                                </ListView.View>
+                                <ListView.ContextMenu>
+                                    <ContextMenu Name="menuItemOrg">
+                                        <MenuItem Header="Add Tag" Click="menuItemOrg_AddTag"/>
+                                        <MenuItem Header="Delete" Click="menuItemOrg_Delete"/>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                            </ListView>
+                            <Label x:Name="label" Content="Search Files" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top"/>
+                            <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Right" Margin="10,37,10,10" VerticalAlignment="Top" Width="55" Click="btnEdit_Click" Height="23"/>
+
+                            <GridSplitter Name="VerticalGS" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5,5,5,5" Grid.Column="2">
+                            <StackPanel Name="FileInfo">
+                                <WrapPanel>
+                                    <Button x:Name="btnCloseEdit" Content="Close" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="55" Click="btnCloseEdit_Click" Height="23"/>
+                                    <Button x:Name="btnSaveEdit" Content="Save" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="55" Click="btnSaveEdit_Click" Height="23"/>
+                                </WrapPanel>
+                                <Label FontSize="25" Content="File Details" FontWeight="Bold"/>
+                                <Image x:Name="videoThumbnail" Grid.Column="2" HorizontalAlignment="Left" Height="Auto" Margin="0,0,0,0" VerticalAlignment="Top" Width="300"/>
+                                <Button x:Name="btnWatch" Content="Watch" Height="30" Margin="0,0,0,0" Click="btnWatch_Click" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Column="0" Grid.Row="0" >File Name:</Label>
+                                    <Label Grid.Column="1"  Grid.Row="0" x:Name="lbEditName" Content="{Binding Name}"/>
+                                    <Label Grid.Column="0" Grid.Row="1">File Path:</Label>
+                                    <Label  Grid.Column="1" Grid.Row="1" x:Name="lbEditFilePath" Content="{Binding Path}"/>
+                                    <Label Grid.Column="0" Grid.Row="2">Favorite:</Label>
+                                    <CheckBox  Grid.Column="1"  Grid.Row="2" x:Name="lbEditFavorite"  IsChecked="{Binding IsFavorite}"/>
+                                    <Label Grid.Column="0" Grid.Row="3">File Size:</Label>
+                                    <Label  Grid.Column="1" Grid.Row="3" x:Name="lbEditFileSize" Content="{Binding FileSize}" ContentStringFormat="{}{0} MB"/>
+                                    <Label Grid.Column="0" Grid.Row="4">Play Count:</Label>
+                                    <Label  Grid.Column="1" Grid.Row="4" x:Name="lbEditPlayCount" Content="{Binding PlayCount}"/>
+                                    <Label Grid.Column="0" Grid.Row="5">Rating:</Label>
+                                    <Label  Grid.Column="1" Grid.Row="5" x:Name="lbEditRating" Content="{Binding Rating}"/>
+                                    <Label Grid.Column="0" Grid.Row="6">Resolution:</Label>
+                                    <Label  Grid.Column="1" Grid.Row="6" x:Name="lbEditResolution" Content="{Binding Resolution}"/>
+                                    <Label Grid.Column="0" Grid.Row="7">Frames Per Second:</Label>
+                                    <Label  Grid.Column="1" Grid.Row="7" x:Name="lbEditFps" Content="{Binding Fps}"/>
+                                    <Label Grid.Column="0" Grid.Row="8">Duration:</Label>
+                                    <Label  Grid.Column="1" Grid.Row="8" x:Name="lbEditDuration" Content="{Binding Minutes}" ContentStringFormat="{}{0} minutes"/>
+                                    <Label Grid.Column="0" Grid.Row="9">Date Added:</Label>
+                                    <Label Grid.Column="1" Grid.Row="9" x:Name="lbEditDateAdded" Content="{Binding DateAdded}"/>
+                                    <Label Grid.Column="0" Grid.Row="10">Date Last Watched:</Label>
+                                    <Label Grid.Column="1"  Grid.Row="10" x:Name="lbEditDateLastWatched" Content="{Binding DateLastWatched}"/>
+                                    <Label Grid.Column="0" Grid.Row="11">Original Date:</Label>
+                                    <Label Grid.Column="1"  Grid.Row="11" x:Name="lbEditOriginalDate" Content="{Binding DateOriginal}"/>
+                                </Grid>
+
+                                <StackPanel Name="stackPanelTags">
+                                    <Label Name="lbTag" FontSize="25" Content="Organize" FontWeight="Bold"/>
+                                    <Button x:Name="btnAddCategory" Content="Add Category" Height="30" Margin="0,0,0,0" Click="btnAddTag_Click" />
+                                    <!--<ListBox x:Name="listBoxCatTags"
                                      SelectedValuePath="Key" Height="114">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -125,10 +131,12 @@
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>-->
-                            <!--<Button x:Name="btnAddCategorytest" Content="Add 2" Height="30" Margin="0,0,0,0" Click="btnAddCategorytest_Click" />-->
-                        </StackPanel>
-                        
-                    </StackPanel>
+                                    <!--<Button x:Name="btnAddCategorytest" Content="Add 2" Height="30" Margin="0,0,0,0" Click="btnAddCategorytest_Click" />-->
+                                </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
                 </Grid>
             </TabItem>
         </TabControl>

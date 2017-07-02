@@ -1,7 +1,9 @@
 ﻿using MediaToolkit;
 using MediaToolkit.Model;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -28,6 +30,7 @@ namespace VideoOrganizer
         private VideoModel currVideo;
         private Dictionary<long, CategoryModel> categoryModelsMap;
         private NReco.VideoConverter.FFMpegConverter ffMpeg;
+        private OpenFileDialog openDialog;
 
         public MainPage()
         {
@@ -45,10 +48,14 @@ namespace VideoOrganizer
             LogTextBlock.DataContext = Logger;
             ThreadPool.SetMinThreads(100, 100);
 
+            openDialog = new OpenFileDialog();
+            openDialog.Multiselect = true;
+
+
             ffMpeg = new NReco.VideoConverter.FFMpegConverter();
         }
         
-        private async void Grid_Drop(object sender, DragEventArgs e)
+        private void Grid_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -57,24 +64,34 @@ namespace VideoOrganizer
 
                 //iterate through each file in directory
                 String[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                await Task<Tuple<int, int>>.Factory.StartNew(() =>
-                  {
-                      int validFiles = 0, invalidFiles = 0;
-                      foreach (String i in files)
-                      {
-                          Tuple<int, int> result = ImportFiles(i);
-                          validFiles += result.Item1;
-                          invalidFiles += result.Item2;
-                      }
-                      return Tuple.Create<int, int>(validFiles, invalidFiles);
-                  }).ContinueWith((result) =>
-               {
-                      Logger.Log(string.Format("Imported {0} files", result.Result.Item1));
-                      if (result.Result.Item2 != 0)
-                          Logger.Log(string.Format("Failed to import {0} files", result.Result.Item2));
-                      Dispatcher.Invoke(() => lvOrganize.ItemsSource = dbService.FindAllVideos());
-                  });
+
+                ParseAndImportFiles(files);
             }
+        }
+
+        /// <summary>
+        /// Parses string of paths and then imports them. Sends to logger when complete
+        /// </summary>
+        /// <param name="files"></param>
+        private async void ParseAndImportFiles(String[] files)
+        {
+            await Task<Tuple<int, int>>.Factory.StartNew(() =>
+            {
+                int validFiles = 0, invalidFiles = 0;
+                foreach (String i in files)
+                {
+                    Tuple<int, int> result = ImportFiles(i);
+                    validFiles += result.Item1;
+                    invalidFiles += result.Item2;
+                }
+                return Tuple.Create<int, int>(validFiles, invalidFiles);
+            }).ContinueWith((result) =>
+            {
+                Logger.Log(string.Format("Imported {0} files", result.Result.Item1));
+                if (result.Result.Item2 != 0)
+                    Logger.Log(string.Format("Failed to import {0} files", result.Result.Item2));
+                Dispatcher.Invoke(() => lvOrganize.ItemsSource = dbService.FindAllVideos());
+            });
         }
 
         /// <summary>
@@ -169,6 +186,9 @@ namespace VideoOrganizer
             return Tuple.Create<int, int>(validFiles, invalidFiles);
         }
 
+        /// <summary>
+        /// Searches videos by calling the database service
+        /// </summary>
         private void SearchVideos()
         {
             string searchText = tbSearch.Text;
@@ -181,11 +201,18 @@ namespace VideoOrganizer
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets all tags for video from database service
+        /// </summary>
+        /// <returns></returns>
         private List<TagModel> GetTagsForVideo()
         {
             return dbService.FindVideoTags(currVideo.Id);
         }
 
+        /// <summary>
+        /// Sets up the edit page by looking at current video selected. Does nothing if current video is null
+        /// </summary>
         private void SetupEditPage()
         {
             if(currVideo == null) return;
@@ -230,6 +257,11 @@ namespace VideoOrganizer
             UpdateVideoTags(currVideo);
         }
 
+        /// <summary>
+        /// Updates the video tags on the edit page for the selected video
+        /// </summary>
+        /// <param name="video"></param>
+        /// <returns></returns>
         public Dictionary<CategoryModel, List<TagModel>> UpdateVideoTags(VideoModel video)
         {
             List<UIElement> stackPanelCollection = new List<UIElement>();
@@ -260,10 +292,14 @@ namespace VideoOrganizer
                 //adds listbox of Tags
                 ListBox listBoxTags = new ListBox();
                 listBoxTags.Uid = "taggedChildrenListBox_" + category.Name;
-
+                listBoxTags.MouseDoubleClick += new MouseButtonEventHandler(element_TagDoubleClick);
+                MenuItem mItem = new MenuItem();
+                mItem.Header = "Delete Tag";
+                mItem.Click += menuItemOrg_DeleteTag;
+                listBoxTags.ContextMenu = new ContextMenu();
+                listBoxTags.ContextMenu.Items.Add(mItem);
                 videoTags[category].ForEach(tag => {
                     listBoxTags.Items.Add(tag.Tag);
-                    listBoxTags.MouseDoubleClick += new MouseButtonEventHandler(element_TagDoubleClick);
                 });
                 stackPanelTags.Children.Add(listBoxTags);
             });
@@ -322,7 +358,12 @@ namespace VideoOrganizer
             dbService.UpdateVideo(currVideo);
         }
 
-        private void btnAddCategory_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Button Event that adds tag
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnAddTag_Click(object sender, RoutedEventArgs e)
         {
             CategoryTagWindow window = new CategoryTagWindow(currVideo)
             {
@@ -330,11 +371,17 @@ namespace VideoOrganizer
             };
             
             window.ShowDialog();
+            UpdateVideoTags(currVideo);
         }
 
+        /// <summary>
+        /// Right click event that adds the tag to the videos
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void menuItemOrg_AddTag(object sender, RoutedEventArgs e)
         {
-            CategoryTagWindow window = new CategoryTagWindow(lvOrganize.SelectedItems as List<VideoModel>)
+            CategoryTagWindow window = new CategoryTagWindow(lvOrganize.SelectedItems)
             {
                 Owner = Application.Current.MainWindow
             };
@@ -342,6 +389,11 @@ namespace VideoOrganizer
             window.ShowDialog();
         }
 
+        /// <summary>
+        /// Event that deletes the file from the database
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void menuItemOrg_Delete(object sender, RoutedEventArgs e)
         {
             foreach(VideoModel video in lvOrganize.SelectedItems)
@@ -352,10 +404,54 @@ namespace VideoOrganizer
             lvOrganize.ItemsSource = dbService.FindAllVideos();
         }
 
+        private void menuItemOrg_DeleteTag(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Key Event for organization list view 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lvOrganize_KeyUp(object sender, KeyEventArgs e)
         {
             if(e.Key.Equals(Key.Delete)){
                 menuItemOrg_Delete(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// Button event to add files. Opens a dialog and then parses the data.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if(openDialog == null)
+            {
+                openDialog = new OpenFileDialog();
+            }
+
+            openDialog.ShowDialog();
+
+            String[] files = openDialog.FileNames;
+            ParseAndImportFiles(files);
+        }
+
+        /// <summary>
+        /// Button to watch video selected
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnWatch_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(currVideo.Path);
+            }catch(Win32Exception)
+            {
+                Logger.Log("Cannot run file. Path invalid.");
             }
         }
     }

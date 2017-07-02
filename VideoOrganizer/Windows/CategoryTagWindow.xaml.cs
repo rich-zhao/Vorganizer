@@ -40,9 +40,9 @@ namespace VideoOrganizer.Windows
             videos = new List<VideoModel> { currVideo };
         }
 
-        public CategoryTagWindow(List<VideoModel> videos) : this()
+        public CategoryTagWindow(IList videos) : this()
         {
-            this.videos = videos;
+            this.videos =  videos.Cast<VideoModel>().ToList();
         }
 
         private void UpdateCategories()
