@@ -33,8 +33,9 @@
                             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Stretch" Height="90" Stroke="Black" VerticalAlignment="Top"/>
                             <Button x:Name="btnSearch" Content="Search" HorizontalAlignment="Left" Margin="144,37,0,0" VerticalAlignment="Top" Width="55" Click="btnSearch_Click" Height="23"/>
                             <TextBox x:Name="tbSearch" HorizontalAlignment="Left" Height="23" Margin="10,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="tbSearch_KeyDown"/>
+                            
 
-                            <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch" MouseDoubleClick="lvOrganize_MouseDoubleClick" KeyUp="lvOrganize_KeyUp" MouseUp="lvOrganize_MouseDoubleClick">
+                            <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch" MouseDoubleClick="lvOrganize_MouseDoubleClick" KeyUp="lvOrganize_KeyUp" MouseUp="lvOrganize_MouseDoubleClick" SelectionChanged="lvOrganize_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Name}"/>
@@ -52,13 +53,15 @@
                                 <ListView.ContextMenu>
                                     <ContextMenu Name="menuItemOrg">
                                         <MenuItem Header="Add Tag" Click="menuItemOrg_AddTag"/>
-                                        <MenuItem Header="Delete" Click="menuItemOrg_Delete"/>
+                                        <MenuItem Header="Delete" Click="menuItemOrg_DeleteVideo"/>
                                     </ContextMenu>
                                 </ListView.ContextMenu>
                             </ListView>
                             <Label x:Name="label" Content="Search Files" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top"/>
                             <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Right" Margin="10,37,10,10" VerticalAlignment="Top" Width="55" Click="btnEdit_Click" Height="23"/>
 
+                            <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="239,39,0,0" VerticalAlignment="Top" Width="120"/>
+                            
                             <GridSplitter Name="VerticalGS" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
 
                         <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5,5,5,5" Grid.Column="2">
@@ -117,7 +120,7 @@
 
                                 <StackPanel Name="stackPanelTags">
                                     <Label Name="lbTag" FontSize="25" Content="Organize" FontWeight="Bold"/>
-                                    <Button x:Name="btnAddCategory" Content="Add Category" Height="30" Margin="0,0,0,0" Click="btnAddTag_Click" />
+                                    <Button x:Name="btnAddCategory" Content="Add Tag" Height="30" Margin="0,0,0,0" Click="btnAddTag_Click" />
                                     <!--<ListBox x:Name="listBoxCatTags"
                                      SelectedValuePath="Key" Height="114">
                                 <ListBox.ItemTemplate>

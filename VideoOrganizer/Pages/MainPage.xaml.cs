@@ -346,10 +346,7 @@ namespace VideoOrganizer
         {
             if(e.Key == Key.Delete)
             {
-                Logger.Log(string.Format("Deleting..."));
-                dbService.DeleteTagFromVideo(currVideo, ((sender as ListBox).SelectedItem as TagModel));
-                UpdateVideoTags(currVideo);
-                Logger.Log(string.Format("Done!"));
+                menuItemOrg_DeleteTag(sender, e);
             }
         }
 
@@ -442,7 +439,7 @@ namespace VideoOrganizer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void menuItemOrg_Delete(object sender, RoutedEventArgs e)
+        private void menuItemOrg_DeleteVideo(object sender, RoutedEventArgs e)
         {
             Logger.Log(string.Format("Deleting..."));
             foreach (VideoModel video in lvOrganize.SelectedItems)
@@ -456,7 +453,10 @@ namespace VideoOrganizer
 
         private void menuItemOrg_DeleteTag(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            Logger.Log(string.Format("Deleting..."));
+            dbService.DeleteTagFromVideo(currVideo, ((sender as ListBox).SelectedItem as TagModel));
+            UpdateVideoTags(currVideo);
+            Logger.Log(string.Format("Done!"));
         }
 
         /// <summary>
@@ -467,7 +467,7 @@ namespace VideoOrganizer
         private void lvOrganize_KeyUp(object sender, KeyEventArgs e)
         {
             if(e.Key.Equals(Key.Delete)){
-                menuItemOrg_Delete(sender, e);
+                menuItemOrg_DeleteVideo(sender, e);
                 
             }
         }
@@ -504,6 +504,11 @@ namespace VideoOrganizer
             {
                 Logger.Log("Cannot run file. Path invalid.");
             }
+        }
+
+        private void lvOrganize_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            lvOrganize_MouseDoubleClick(sender, null);
         }
     }
 }
