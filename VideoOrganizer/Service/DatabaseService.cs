@@ -40,6 +40,7 @@ namespace VideoOrganizer
         /// <param name="path">Absolute file path provided by SaveFileDialog</param>
         public void InitializeNewDb(string path)
         {
+            if (path == null) throw new NullReferenceException();
             SQLiteConnection.CreateFile(path);
             OpenConnection(path);
 
@@ -97,6 +98,7 @@ namespace VideoOrganizer
 
         public void AddVideo(VideoModel video)
         {
+            if (video == null) throw new NullReferenceException();
             string sql = "INSERT INTO videos (name, path, file_size, resolution, fps, seconds, hash, date_original, date_last_watched) VALUES(@name, @path, @file_size, @resolution,@fps, @seconds, @hash, @date_original, @date_last_watched)";
             SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@name", video.Name);
@@ -114,6 +116,7 @@ namespace VideoOrganizer
 
         public CategoryModel AddCategory(string name)
         {
+            if (name == null) return null;
             name = name.Trim();
             //check if already exists
             CategoryModel category = FindAllCategories().Find(cat => cat.Name.Equals(name));
@@ -150,6 +153,7 @@ namespace VideoOrganizer
         
         public void AddTagToVideo(VideoModel video, TagModel tag)
         {
+            if (video == null || tag == null) throw new NullReferenceException();
             if(tag != null && video != null)
                 AddTagToVideo(video.Id, tag.Id);
         }
@@ -170,6 +174,7 @@ namespace VideoOrganizer
 
         public List<TagModel> FindVideoTags(VideoModel video)
         {
+            if (video == null) return null;
             return FindVideoTags(video.Id);
         }
 
@@ -204,6 +209,7 @@ namespace VideoOrganizer
 
         public TagModel FindTagByName(string tagName)
         {
+            if (tagName == null) return null;
             string sql = "SELECT * FROM tags WHERE name = @tagName";
             SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@tagName", tagName);
@@ -216,6 +222,7 @@ namespace VideoOrganizer
 
         public List<TagModel> FindTagsByCategory(CategoryModel category)
         {
+            if (category == null) return null;
             return FindTagsByCategory(category.Id);
         }
 
@@ -250,6 +257,7 @@ namespace VideoOrganizer
 
         public CategoryModel FindCategoryByName(string categoryName)
         {
+            if (categoryName == null) return null;
             string sql = "SELECT * FROM categories WHERE name = @categoryName";
             SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@categoryName", categoryName);
@@ -300,7 +308,7 @@ namespace VideoOrganizer
 
         public List<VideoModel> FindVideos(string fileName)
         {
-            if (!IsConnectionOpen()) throw new Exception();
+            if (!IsConnectionOpen() || fileName == null) throw new Exception();
             List<VideoModel> videos = new List<VideoModel>();
 
             string getVideoQuery = "SELECT * FROM Videos WHERE name LIKE @name";
@@ -313,11 +321,34 @@ namespace VideoOrganizer
             return videos;
         }
 
+        public List<VideoModel> FindVideosByVideoTag(TagModel tag)
+        {
+            if (tag == null) return null;
+            return FindVideosByVideoTag(tag.Id);
+        }
+
+        public List<VideoModel> FindVideosByVideoTag(long tagId)
+        {
+            if (!IsConnectionOpen()) throw new Exception();
+            List<VideoModel> videos = new List<VideoModel>();
+
+            string getVideoQuery = "SELECT * FROM Videos WHERE id IN (SELECT video_id FROM video_tags WHERE tag_id = @tagId)";
+            SQLiteCommand command = new SQLiteCommand(getVideoQuery, connection);
+            command.Parameters.AddWithValue("@tagId", tagId);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            ParseVideos(reader, videos);
+
+            return videos;
+
+        }
+
         /// <summary>
         /// Deletes Video from the database and its associated records in other tables
         /// </summary>
         public void DeleteVideo(VideoModel video)
         {
+            if (video == null) throw new NullReferenceException();
             DeleteVideo(video.Id);
 
         }
@@ -333,7 +364,7 @@ namespace VideoOrganizer
 
         public void UpdateVideo(VideoModel video)
         {
-            if (!IsConnectionOpen()) throw new Exception();
+            if (!IsConnectionOpen() || video == null) throw new Exception();
             string updateVideoQuery = "UPDATE Videos SET is_favorite=@favorite, play_count=@play_count, " +
                 "rating=@rating, date_last_watched=@date_last_watched WHERE id =@id";
             SQLiteCommand command = new SQLiteCommand(updateVideoQuery, connection);
@@ -378,6 +409,7 @@ namespace VideoOrganizer
 
         public void DeleteTagFromVideo(VideoModel video, TagModel tag)
         {
+            if (video == null || tag == null) throw new NullReferenceException();
             string sql = "DELETE FROM video_tags WHERE video_id = @videoId AND tag_id = @tagId";
             SQLiteCommand command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@videoId", video.Id);
@@ -391,6 +423,7 @@ namespace VideoOrganizer
         /// <param name="path"></param>
         public void LoadExistingDb(string path)
         {
+            if (path == null) throw new NullReferenceException();
             OpenConnection(path);
 
             //testing proof of concept. remove later

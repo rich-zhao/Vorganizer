@@ -30,7 +30,7 @@
 
             <StackPanel x:Name="spAddTag" Orientation="Horizontal" MouseUp="Tag_Checked" >
                 <RadioButton x:Name="rbAddNewTag"  VerticalAlignment="Center" GroupName="tag" Click="Tag_Checked" />
-                <TextBox x:Name="tbAddTag" Width="196" Text="Add new tag" IsEnabled="False"/>
+                <TextBox x:Name="tbAddTag" Width="196" Text="Add new tag" IsEnabled="False" KeyUp="tbAddTag_KeyUp"/>
             </StackPanel>
 
             <Button x:Name="btnAddExistingCategory" Content="Add" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Width="55" Height="23" Click="btnAddTag_Click"/>

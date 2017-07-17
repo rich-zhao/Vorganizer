@@ -18,6 +18,8 @@ using VideoOrganizer.Model;
 using VideoOrganizer.Service;
 using VideoOrganizer.Windows;
 
+using System.Runtime.Caching;
+
 namespace VideoOrganizer
 {
     /// <summary>
@@ -31,6 +33,8 @@ namespace VideoOrganizer
         private Dictionary<long, CategoryModel> categoryModelsMap;
         private NReco.VideoConverter.FFMpegConverter ffMpeg;
         private OpenFileDialog openDialog;
+        private ObjectCache cache;
+
 
         public MainPage()
         {
@@ -49,7 +53,26 @@ namespace VideoOrganizer
 
             openDialog = new OpenFileDialog();
             openDialog.Multiselect = true;
+            cbCategorySearch.ItemsSource = dbService.FindAllCategories();
 
+            // ------caching------
+
+            cache = MemoryCache.Default;
+            string fileContents = cache["filecontents"] as string;
+            if(fileContents == null)
+            {
+                CacheItemPolicy policy = new CacheItemPolicy();
+                string cachePath = Path.GetTempPath() + "vorgCache";
+                if (!File.Exists(cachePath))
+                {
+                    File.Create(cachePath).Close();
+                }
+                List<string> filePaths = new List<string>();
+                filePaths.Add(cachePath);
+                policy.ChangeMonitors.Add(new HostFileChangeMonitor(filePaths));
+                fileContents = File.ReadAllText(cachePath) + "\n" + DateTime.Now;
+                cache.Set("filecontents", fileContents, policy);
+            }
 
             ffMpeg = new NReco.VideoConverter.FFMpegConverter();
         }
@@ -255,18 +278,26 @@ namespace VideoOrganizer
 
             //creates thumbnail
             try
-            { 
-                var thumbNailSource = new BitmapImage();
-                using (var memStream = new MemoryStream())
+            {
+                if (cache[currVideo.Name] == null)
                 {
-                    ffMpeg.GetVideoThumbnail(currVideo.Path, memStream, 60f);
-                    memStream.Position = 0;
-                    thumbNailSource.BeginInit();
-                    thumbNailSource.CacheOption = BitmapCacheOption.OnLoad;
-                    thumbNailSource.StreamSource = memStream;
-                    thumbNailSource.EndInit();
-                    thumbNailSource.Freeze();
-                    videoThumbnail.Source = thumbNailSource;
+                    var thumbNailSource = new BitmapImage();
+                    using (var memStream = new MemoryStream())
+                    {
+                        ffMpeg.GetVideoThumbnail(currVideo.Path, memStream, 60f);
+                        memStream.Position = 0;
+                        thumbNailSource.BeginInit();
+                        thumbNailSource.CacheOption = BitmapCacheOption.OnLoad;
+                        thumbNailSource.StreamSource = memStream;
+                        thumbNailSource.EndInit();
+                        thumbNailSource.Freeze();
+                        cache[currVideo.Name] = thumbNailSource;
+                        videoThumbnail.Source = thumbNailSource;
+                    }
+                }
+                else
+                {
+                    videoThumbnail.Source = cache[currVideo.Name] as ImageSource;
                 }
             }
             catch (System.NotSupportedException)
@@ -509,6 +540,30 @@ namespace VideoOrganizer
         private void lvOrganize_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             lvOrganize_MouseDoubleClick(sender, null);
+        }
+
+        private void cbCategorySearch_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbCategorySearch.SelectedIndex != -1)
+            {
+                List<TagModel> tags = dbService.FindTagsByCategory((CategoryModel)cbCategorySearch.SelectedItem);
+                cbTagSearch.ItemsSource = tags;
+            }
+        }
+
+        private void cbTagSearch_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(cbTagSearch.SelectedIndex != -1)
+                lvOrganize.ItemsSource = dbService.FindVideosByVideoTag((TagModel)cbTagSearch.SelectedItem);
+        }
+
+        private void btnReset_Click(object sender, RoutedEventArgs e)
+        {
+            tbSearch.Text = "";
+            cbCategorySearch.SelectedIndex = -1;
+            cbTagSearch.SelectedIndex = -1;
+
+            SearchVideos();
         }
     }
 }

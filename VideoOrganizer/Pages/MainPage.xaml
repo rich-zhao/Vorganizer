@@ -19,50 +19,55 @@
                 <StackPanel Background="#FFE5E5E5" Margin="0,0,0,0">
                     <Label FontSize="25" Content="Add Videos" FontWeight="Bold" HorizontalAlignment="Center"/>
                     <Label Content="Drag and Drop into the window to add videos. You can also add videos by clicking on the 'Add Video' button below"/>
+                    <Label Content="NOTE: To add folders, please drag and drop into the window"/>
                     <Button x:Name="btnAdd" Content="Add Video" Click="btnAdd_Click" Height="45" Width="150" Margin="0,10,0,0"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Organize">
                 <Grid Height="auto" >
-                        <Grid Name="ChildGrid" Background="#FFE5E5E5" Margin="0,0,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="5"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Stretch" Height="90" Stroke="Black" VerticalAlignment="Top"/>
-                            <Button x:Name="btnSearch" Content="Search" HorizontalAlignment="Left" Margin="144,37,0,0" VerticalAlignment="Top" Width="55" Click="btnSearch_Click" Height="23"/>
-                            <TextBox x:Name="tbSearch" HorizontalAlignment="Left" Height="23" Margin="10,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="tbSearch_KeyDown"/>
-                            
+                    <Grid Name="ChildGrid" Background="#FFE5E5E5" Margin="0,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Stretch" Height="90" Stroke="Black" VerticalAlignment="Top"/>
+                        <Button x:Name="btnSearch" Content="Search" HorizontalAlignment="Left" Margin="144,37,0,0" VerticalAlignment="Top" Width="55" Click="btnSearch_Click" Height="23"/>
+                        <TextBox x:Name="tbSearch" HorizontalAlignment="Left" Height="23" Margin="10,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" KeyDown="tbSearch_KeyDown"/>
 
-                            <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch" MouseDoubleClick="lvOrganize_MouseDoubleClick" KeyUp="lvOrganize_KeyUp" MouseUp="lvOrganize_MouseDoubleClick" SelectionChanged="lvOrganize_SelectionChanged">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Name}"/>
-                                        <GridViewColumn Header="Path" Width="Auto" DisplayMemberBinding="{Binding Path}"/>
-                                        <GridViewColumn Header="Favorite" Width="Auto" DisplayMemberBinding="{Binding IsFavorite}"/>
-                                        <GridViewColumn Header="File Size" Width="Auto" DisplayMemberBinding="{Binding FileSize, StringFormat={}{0} MB}"/>
-                                        <GridViewColumn Header="Play Count" Width="Auto" DisplayMemberBinding="{Binding PlayCount}"/>
-                                        <GridViewColumn Header="Rating" Width="Auto" DisplayMemberBinding="{Binding Rating}"/>
-                                        <GridViewColumn Header="Resolution" Width="Auto" DisplayMemberBinding="{Binding Resolution}"/>
-                                        <GridViewColumn Header="Fps" Width="Auto" DisplayMemberBinding="{Binding Fps}"/>
-                                        <GridViewColumn Header="Minutes" Width="Auto" DisplayMemberBinding="{Binding Minutes, StringFormat={}{0} mins}"/>
-                                        <GridViewColumn Header="Date Added" Width="Auto" DisplayMemberBinding="{Binding DateAdded}"/>
-                                    </GridView>
-                                </ListView.View>
-                                <ListView.ContextMenu>
-                                    <ContextMenu Name="menuItemOrg">
-                                        <MenuItem Header="Add Tag" Click="menuItemOrg_AddTag"/>
-                                        <MenuItem Header="Delete" Click="menuItemOrg_DeleteVideo"/>
-                                    </ContextMenu>
-                                </ListView.ContextMenu>
-                            </ListView>
-                            <Label x:Name="label" Content="Search Files" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top"/>
-                            <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Right" Margin="10,37,10,10" VerticalAlignment="Top" Width="55" Click="btnEdit_Click" Height="23"/>
 
-                            <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="239,39,0,0" VerticalAlignment="Top" Width="120"/>
-                            
-                            <GridSplitter Name="VerticalGS" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+                        <ListView x:Name="lvOrganize" HorizontalAlignment="Stretch" SelectionMode="Extended" Margin="10,95,10,10" VerticalAlignment="Stretch" MouseDoubleClick="lvOrganize_MouseDoubleClick" KeyUp="lvOrganize_KeyUp" MouseUp="lvOrganize_MouseDoubleClick" SelectionChanged="lvOrganize_SelectionChanged">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Name}"/>
+                                    <GridViewColumn Header="Path" Width="Auto" DisplayMemberBinding="{Binding Path}"/>
+                                    <GridViewColumn Header="Favorite" Width="Auto" DisplayMemberBinding="{Binding IsFavorite}"/>
+                                    <GridViewColumn Header="File Size" Width="Auto" DisplayMemberBinding="{Binding FileSize, StringFormat={}{0} MB}"/>
+                                    <GridViewColumn Header="Play Count" Width="Auto" DisplayMemberBinding="{Binding PlayCount}"/>
+                                    <GridViewColumn Header="Rating" Width="Auto" DisplayMemberBinding="{Binding Rating}"/>
+                                    <GridViewColumn Header="Resolution" Width="Auto" DisplayMemberBinding="{Binding Resolution}"/>
+                                    <GridViewColumn Header="Fps" Width="Auto" DisplayMemberBinding="{Binding Fps}"/>
+                                    <GridViewColumn Header="Minutes" Width="Auto" DisplayMemberBinding="{Binding Minutes, StringFormat={}{0} mins}"/>
+                                    <GridViewColumn Header="Date Added" Width="Auto" DisplayMemberBinding="{Binding DateAdded}"/>
+                                </GridView>
+                            </ListView.View>
+                            <ListView.ContextMenu>
+                                <ContextMenu Name="menuItemOrg">
+                                    <MenuItem Header="Add Tag" Click="menuItemOrg_AddTag"/>
+                                    <MenuItem Header="Delete" Click="menuItemOrg_DeleteVideo"/>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                        </ListView>
+                        <Label x:Name="label" Content="Search Files" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top"/>
+
+                        <Button x:Name="btnReset" Content="Reset" HorizontalAlignment="Right" Margin="0,20,10,0" VerticalAlignment="Top" Width="55" Click="btnReset_Click" Height="23"/>
+                        <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Right" Margin="0,52,10,0" VerticalAlignment="Top" Width="55" Click="btnEdit_Click" Height="23"/>
+                        <StackPanel Height="Auto" Width="Auto" HorizontalAlignment="Left" Margin="250,0,0,0">
+                            <Label Content="Search By Tag" Width="Auto" HorizontalAlignment="Center" Height="Auto"/>
+                            <ComboBox x:Name="cbCategorySearch" HorizontalAlignment="Center" VerticalAlignment="Top" Width="120" SelectionChanged="cbCategorySearch_SelectionChanged" DisplayMemberPath="Name"/>
+                            <ComboBox x:Name="cbTagSearch" HorizontalAlignment="Center" VerticalAlignment="Top" Width="120" Margin="0,10" SelectionChanged="cbTagSearch_SelectionChanged" DisplayMemberPath="Tag"/>
+                        </StackPanel>
+                        <GridSplitter Name="VerticalGS" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
 
                         <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5,5,5,5" Grid.Column="2">
                             <StackPanel Name="FileInfo">

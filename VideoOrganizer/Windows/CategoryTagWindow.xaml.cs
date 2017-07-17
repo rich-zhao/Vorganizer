@@ -80,7 +80,6 @@ namespace VideoOrganizer.Windows
             //Debug.WriteLine(((CategoryModel)cbCategory.SelectedItem).Name);
             List<TagModel> tags =dbService.FindTagsByCategory((CategoryModel)cbCategory.SelectedItem);
             cbTag.ItemsSource = tags;
-            tags.ForEach(x => Debug.WriteLine(x.Tag));
         }
         
 
@@ -120,6 +119,15 @@ namespace VideoOrganizer.Windows
                     rbAddNewTag.IsChecked = true;
                 }
             }
+        }
+
+        private void tbAddTag_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                btnAddTag_Click(sender, e);
+            }
+
         }
     }
 }
